@@ -102,11 +102,11 @@ export default {
       this.rowClick(this.batchData[0])
     },
     rowClick (row) {
-      console.log(row.detailData)
+      // console.log(row.detailData)
       this.detailData = row.detailData
     },
     handleNodeClick (data) {
-      console.log(data)
+      // console.log(data)
     }
   }
 }

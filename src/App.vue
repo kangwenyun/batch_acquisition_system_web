@@ -36,30 +36,37 @@
       </div>
     </div>
     <div class="content_wrap">
-      <div class="nav">
-        <el-menu :default-active="activeIndex" 
+      <div class="nav" @mouseover="overShow" @mouseout="outHide">
+        <el-menu :default-active="activeIndex"
             router unique-opened class="el-menu-vertical-demo"
-            @click="handleClick">
-          <el-menu-item index="proline"><i class="el-icon-menu"></i><span id="proLine_text">生产线信息</span></el-menu-item>
+            @select="handleClick">
+          <el-menu-item index="proline"><i class="el-icon-menu">
+              </i><span id="proLine_text" :class="{show:showText,hide:hideText}"
+                        >生产线信息</span>
+          </el-menu-item>
           <el-submenu index="checkbatch">
-            <template slot="title"><i class="el-icon-document"></i><span id="batch_text">批次信息</span></template>
+            <template slot="title"><i class="el-icon-document"></i>
+                <span id="batch_text" :class="{show:showText,hide:hideText}">批次信息</span></template>
               <el-menu-item index="checkallbatch">全部批次信息查看</el-menu-item>
               <el-menu-item index="checkacceptancebatch">接受中批次信息查看</el-menu-item>
               <el-menu-item index="checkunderreviewbatch">审核中批次信息查看</el-menu-item>
               <el-menu-item index="checkfinishedbatch">已完成批次信息查看</el-menu-item>
           </el-submenu>
           <el-submenu index="prodataview">
-            <template slot="title"><i class="el-icon-setting"></i><span id="pro_text">货物信息</span></template>
+            <template slot="title"><i class="el-icon-setting"></i>
+                <span id="pro_text" :class="{show:showText,hide:hideText}">货物信息</span></template>
               <el-menu-item index="prodataview">货物数据查看</el-menu-item>
               <el-menu-item index="prodatamaintain">货物数据维护</el-menu-item>
           </el-submenu>
           <el-submenu index="log">
-            <template slot="title"><i class="el-icon-edit"></i><span id="log_text">日志与权限</span></template>
+            <template slot="title"><i class="el-icon-edit"></i>
+                <span id="log_text" :class="{show:showText,hide:hideText}">日志与权限</span></template>
               <el-menu-item index="log">日志查看</el-menu-item>
               <el-menu-item index="level">权限管理</el-menu-item>
           </el-submenu>
           <el-submenu index="perinfo">
-            <template slot="title"><i class="el-icon-star-on"></i><span id="personalInfo_text">个人信息</span></template>
+            <template slot="title"><i class="el-icon-star-on"></i>
+                <span id="personalInfo_text" :class="{show:showText,hide:hideText}">个人信息</span></template>
               <el-menu-item index="perinfo">个人信息</el-menu-item>
               <el-menu-item index="changepasswd">密码修改</el-menu-item>
           </el-submenu>
@@ -75,17 +82,29 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: 'app',
   data () {
     return {
-      activeIndex: 'proline'
+      activeIndex: 'proline',
+      showText: false,
+      hideText: true
     }
   },
   methods: {
     handleClick () {
+    //   console.log('12')
+    },
+    overShow () {
       console.log('12')
+      this.showText = !this.showText
+      this.hideText = !this.hideText
+    },
+    outHide () {
+      this.showText = !this.showText
+      this.hideText = !this.hideText
     }
   }
 }
@@ -141,6 +160,12 @@ export default {
     }
 }
 @media screen and (max-width: 720px) {
+    .show{
+        display: block;
+    }
+    .hide{
+        display: none;
+    }
     .navMenu{
         display: none;
     }
@@ -153,7 +178,6 @@ export default {
     }
     .nav{
         display: block;
-        width: 50px;
         position: fixed;
         top:80px;
         z-index: 999;
@@ -161,11 +185,17 @@ export default {
     .el-submenu__icon-arrow{
         display: none;
     }
+    [class*=" el-icon-"], [class^=el-icon-]{
+        position: relative;
+    }
     #proLine_text, #batch_text, #pro_text, #log_text, #personalInfo_text{
-        display: none;
+        position: relative;
+        left: 20px;
+        top: -100%;
+        margin-right: 10px;
     }
     .detailData{
-        margin-left: 60px !important;
+        margin-left: 70px !important;
     }
 }
 .detailData{
