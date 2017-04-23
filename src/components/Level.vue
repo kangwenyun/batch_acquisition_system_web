@@ -114,3 +114,8 @@ export default {
     padding-bottom: 50px;
 }
 </style>
+<style>
+.el-dialog--small {
+    width: 400px;
+}
+</style>

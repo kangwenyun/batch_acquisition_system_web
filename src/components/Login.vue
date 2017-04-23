@@ -81,7 +81,9 @@ export default {
     },
     login () {
       var vm = this
-      vm.$http.post(this.loginUrl, vm.form.user, vm.form.pwd)
+      var user = 'userid:' + vm.form.user
+      var pwd = 'passwd:' + vm.form.pwd
+      vm.$http.post(this.loginUrl, user, pwd)
               .then((response) => {
                 console.log('12:' + response)
       // 跳转到主界面

@@ -3,21 +3,16 @@
     <el-row class="content_wrap">
       <div class="find">
         <el-button @click="addAll" style="width:24%">加载全部货物信息</el-button>
-        <div class="find_img">
-          <img src="../assets/find.png" alt="" v-if="showImg" @click="showInput">
-        </div>
-        <transition name="find">
-            <div v-if="show" class="find_input">
-                <el-autocomplete
-                    placeholder="请输入要查询信息"
-                    icon="search"
-                    v-model="search"
-                    :fetch-suggestions="querySearch"
-                    style="width:100%"
-                    @select="handleSelect">
-                </el-autocomplete>
-            </div>
-          </transition>
+          <div class="find_input">
+              <el-autocomplete
+                  placeholder="请输入要查询信息"
+                  icon="search"
+                  v-model="search"
+                  :fetch-suggestions="querySearch"
+                  style="width:100%"
+                  @select="handleSelect">
+              </el-autocomplete>
+          </div>
       </div>
       <el-table
         :data="proData"
@@ -67,8 +62,6 @@ export default {
   name: 'view',
   data () {
     return {
-      showImg: true,
-      show: false,
       search: '',
       proData: [],
       findData: [],
@@ -112,10 +105,6 @@ export default {
         this.proData.push(element)
         this.saveData.push(element)
       }, this)
-    },
-    showInput () {
-      this.showImg = false
-      this.show = true
     },
     tableRowClassName (row, index) {
       if (row.flag === 1) {
@@ -169,87 +158,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.find_img{
-  display: inline-block;
-  position: relative;
-  left: 5px;
-  top: 8px;
-}
-img{
-  width: 30px;
-  height: 30px;
-}
 .find_input{
   display: inline-block;
-  width: 74%;
-  margin-left: 3px;
+  width: 75%;
 }
 .find{
   margin-bottom: 5px;
   width: 100%;
-  position: relative;
 }
-.find-enter-active
-{
-animation: myfind-in 2s;
--moz-animation: myfind-in 2s;	/* Firefox */
--webkit-animation: myfind-in 2s;	/* Safari 和 Chrome */
--o-animation: myfind-in 2s;	/* Opera */
-}
-.find-leave-active
-{
-animation: myfind-out 3s;
--moz-animation: myfind-out 3s;	/* Firefox */
--webkit-animation: myfind-out 3s;	/* Safari 和 Chrome */
--o-animation: myfind-out 3s;	/* Opera */
-}
-@keyframes myfind-in
-{
-0%   {height: 0px; width: 0;}
-100% {height: 36px; width: 100%;}
-}
-
-@-moz-keyframes myfind-in /* Firefox */
-{
-0%   {height: 0px; width: 0;}
-100% {height: 30px; width: 100%;}
-}
-
-@-webkit-keyframes myfind-in /* Safari 和 Chrome */
-{
-0%   {height: 0px; width: 0;}
-100% {height: 30px; width: 100%;}
-}
-
-@-o-keyframes myfind-in /* Opera */
-{
-0%   {height: 0px; width: 0;}
-100% {height: 30px; width: 100%;}
-}
-@keyframes myfind-out
-{
-0%   {height: 36px; width: 100%;}
-100% {height: 0px; width: 0px;}
-}
-
-@-moz-keyframes myfind-out /* Firefox */
-{
-0%   {height: 36px; width: 100%;}
-100% {height: 0px; width: 0px;}
-}
-
-@-webkit-keyframes myfind-out /* Safari 和 Chrome */
-{
-0%   {height: 36px; width: 100%;}
-100% {height: 0px; width: 0px;}
-}
-
-@-o-keyframes myfind-out /* Opera */
-{
-0%   {height: 36px; width: 100%;}
-100% {height: 0px; width: 0px;}
-}
-
 .info-row {
     background-color: #b1b3b5;
     color: white;

@@ -2,25 +2,26 @@
   <div class="proDataMaintain">
     <div class="find">
         <i class="el-icon-edit icon_pos" v-on:mouseenter="edit"></i>
-        <el-button :class="{show: edit_icon, hide: unedit_icon}">修改</el-button>
+        <el-button :class="{show: edit_icon, hide: unedit_icon}" @click="editData">修改</el-button>
         <i class="el-icon-plus icon_pos" v-on:mouseenter="plus"></i>
-        <el-button :class="{show: plus_icon, hide: unplus_icon}">增加</el-button>
+        <el-button :class="{show: plus_icon, hide: unplus_icon}" @click="addData">增加</el-button>
         <i class="el-icon-delete icon_pos" v-on:mouseenter="delete1"></i>
-        <el-button :class="{show: delete1_icon, hide: undelete1_icon}">删除</el-button>
+        <el-button :class="{show: delete1_icon, hide: undelete1_icon}" @click="deleteData">删除</el-button>
         <i class="el-icon-delete2 icon_pos" v-on:mouseenter="delete2"></i>
-        <el-button :class="{show: delete2_icon, hide: undelete2_icon}">删除所有</el-button>
+        <el-button :class="{show: delete2_icon, hide: undelete2_icon}" @click="deleteAllData">删除所有</el-button>
         <i class="el-icon-document icon_pos" v-on:mouseenter="document"></i>
-        <el-button :class="{show: document_icon, hide: undocument_icon}" @click="addAll">加载全部货物信息</el-button>
+        <el-button :class="{show: document_icon, hide: undocument_icon}" @click="addAllData">加载全部货物信息</el-button>
         <i class="el-icon-date icon_pos" v-on:mouseenter="date"></i>
         <el-date-picker
             :class="{show: date_icon, hide: undate_icon}"
             v-model="date"
             type="date"
-            placeholder="选择日期"
-            :picker-options="pickerOptions">
+            placeholder="想要查看哪天的数据？"
+            :picker-options="pickerOptions"
+            format="yyyy-MM-dd"
+            @change="dateChange">
         </el-date-picker>
         <i class="el-icon-search icon_pos" v-if="showImg" @click="showInput"></i>
-        <!--<img src="../images/find.png" alt="" v-if="showImg" @click="showInput">-->
         <div class="find_right">
             <transition name="find">
                 <div v-if="show">
@@ -41,6 +42,8 @@
         <el-table
           :data="proData"
           style="width: 100%"
+          highlight-current-row
+          @current-change="handleCurrentChange"
           :row-class-name="tableRowClassName">
           <el-table-column
               prop="id"
@@ -78,6 +81,77 @@
           </el-table-column>
         </el-table>
     </el-row>
+    <el-dialog title="货物数据修改" v-model="editDialogFormVisible" :close-on-click-modal="false">
+        <el-form ref="editForm" :model="editForm" :rules="changeDataRules">
+            <el-form-item label="id" :label-width="formLabelWidth">
+                <el-input v-model.number="editForm.id" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="批次号" :label-width="formLabelWidth" prop = "batchId">
+                <el-input v-model="editForm.batchId"> </el-input>
+            </el-form-item>
+            <el-form-item label="托盘号" :label-width="formLabelWidth" prop = "trayId">
+                <el-input v-model="editForm.trayId"> </el-input>
+            </el-form-item>
+            <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
+                <el-input v-model="editForm.proId"> </el-input>
+            </el-form-item>
+            <el-form-item label="货物类型" :label-width="formLabelWidth" prop = "proType">
+                <el-input v-model="editForm.proType"></el-input>
+            </el-form-item>
+            <el-form-item label="录入时间" :label-width="formLabelWidth">
+                <el-date-picker
+                  style="width: 100%"
+                  v-model="editForm.time"
+                  type="datetime"
+                  :editable=false
+                  placeholder="选择日期时间"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="备注" :label-width="formLabelWidth" prop = "flag">
+                <el-input v-model.number="editForm.flag"> </el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="editDialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editSubmitForm('editForm')">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="货物数据增加" v-model="plusDialogFormVisible" :close-on-click-modal="false">
+        <el-form ref="plusForm" :model="plusForm" :rules="changeDataRules">
+            <el-form-item label="批次号" :label-width="formLabelWidth" prop = "batchId">
+                <el-input v-model="plusForm.batchId"> </el-input>
+            </el-form-item>
+            <el-form-item label="托盘号" :label-width="formLabelWidth" prop = "trayId">
+                <el-input v-model="plusForm.trayId"> </el-input>
+            </el-form-item>
+            <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
+                <el-input v-model="plusForm.proId"> </el-input>
+            </el-form-item>
+            <el-form-item label="货物类型" :label-width="formLabelWidth" prop = "proType">
+                <el-input v-model="plusForm.proType"></el-input>
+            </el-form-item>
+            <el-form-item label="录入时间" :label-width="formLabelWidth">
+                <el-date-picker
+                  style="width: 100%"
+                  v-model="plusForm.time"
+                  type="datetime"
+                  :editable=false
+                  placeholder="选择日期时间"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="备注" :label-width="formLabelWidth" prop = "flag">
+                <el-input v-model.number="plusForm.flag"> </el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="plusDialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="plusSubmitForm('plusForm')">确 定</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -100,15 +174,55 @@ export default {
       undate_icon: true,
       pickerOptions: {
         disabledDate (time) {
-          return time.getTime() < Date.now() - 8.64e7
+          return time.getTime() > Date.now() - 8.64e7
         }
       },
       showImg: true,
       show: false,
       search: '',
-      proData: [],
-      findData: [],
-      saveData: []
+      proData: [], // 表格里当前展示的数据
+      findData: [], // 用于查找的下拉列表里的数据
+      saveData: [], // 保存表格里的所有数据
+      current: -1, // 表示未选中任何行
+      current_row: [],
+      formLabelWidth: '100px',
+      editDialogFormVisible: false,
+      plusDialogFormVisible: false,
+      editForm: {
+        id: '',
+        batchId: '',
+        trayId: '',
+        proId: '',
+        proType: '',
+        time: '',
+        flag: ''
+      },
+      plusForm: {
+        batchId: '',
+        trayId: '',
+        proId: '',
+        proType: '',
+        time: '',
+        flag: ''
+      },
+      changeDataRules: {
+        batchId: [
+          {required: true, message: '请输入批次号'}
+        ],
+        trayId: [
+          {required: true, message: '请输入托盘号'}
+        ],
+        proId: [
+          {required: true, message: '请输入货物号'}
+        ],
+        proType: [
+          {required: true, message: '请输入货物类型'}
+        ],
+        flag: [
+          {required: true, message: '请输入备注值'},
+          {type: 'number', message: '备注值必须为数字值'}
+        ]
+      }
     }
   },
   created () {
@@ -237,9 +351,6 @@ export default {
       this.showImg = false
       this.show = true
     },
-    handleIconClick (ev) {
-      console.log(ev)
-    },
     tableRowClassName (row, index) {
       if (row.flag === 1) {
         // console.log('row:' + row + ';flag:' + row.flag)
@@ -283,8 +394,116 @@ export default {
       this.proData = []
       this.proData.push(data)
     },
-    addAll () {
+    handleCurrentChange (currentRow) {
+      // console.log(currentRow)
+      this.current_row = currentRow
+      // 根据批次号查找是选中的是第几行
+      this.proData.forEach(function (element, index) {
+        if (element.batchId === currentRow.batchId) {
+          this.current = index
+          // console.log(this.current)
+        }
+      }, this)
+    },
+    hasSelect () {
+      if (this.current === -1) {
+        this.$alert('请先选择要修改的数据', '错误提示', {
+          confirmButtonText: '去选择'
+        })
+        return false
+      }
+      return true
+    },
+    editData () {
+      if (this.hasSelect()) {
+        this.editDialogFormVisible = true
+        this.editForm.id = this.current_row.id
+        this.editForm.batchId = this.current_row.batchId
+        this.editForm.trayId = this.current_row.trayId
+        this.editForm.proId = this.current_row.proId
+        this.editForm.proType = this.current_row.proType
+        this.editForm.time = this.current_row.time
+        this.editForm.flag = this.current_row.flag
+      }
+    },
+    addData () {
+      this.plusDialogFormVisible = true
+      this.plusForm.time = Date.now()
+    },
+    deleteData () {
+      if (this.hasSelect()) {
+        this.$confirm('确定要删除该条数据吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.proData.splice(this.current, 1)
+          this.saveData = this.proData
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }
+    },
+    deleteAllData () {
+      this.$confirm('确定要删除该条数据吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.proData = null
+        this.saveData = null
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    addAllData () {
       this.proData = this.saveData
+    },
+    dateChange () {
+      //
+    },
+    editSubmitForm (editForm) {
+      this.$refs[editForm].validate((valid) => {
+        if (valid) {
+          var editValue = {
+            id: this.editForm.id,
+            batchId: this.editForm.batchId,
+            trayId: this.editForm.trayId,
+            proId: this.editForm.proId,
+            proType: this.editForm.proType,
+            time: this.editForm.time,
+            flag: this.editForm.flag
+          }
+          this.proData.splice(this.current, 1, editValue)
+          this.saveData = this.proData
+          this.editDialogFormVisible = false
+        }
+      })
+    },
+    plusSubmitForm (plusForm) {
+      this.$refs[plusForm].validate((valid) => {
+        if (valid) {
+          var plusTime = new Date(this.plusForm.time)
+          var plusValue = {
+            id: this.plusForm.id,
+            batchId: this.plusForm.batchId,
+            trayId: this.plusForm.trayId,
+            proId: this.plusForm.proId,
+            proType: this.plusForm.proType,
+            time: plusTime.getFullYear() + '-' + plusTime.getMonth() + '-' + plusTime.getDate() + ' ' + plusTime.getHours() + ':' + plusTime.getMinutes() + ':' + plusTime.getSeconds(),
+            flag: this.plusForm.flag
+          }
+          this.proData.push(plusValue)
+          this.saveData = this.proData
+          this.plusDialogFormVisible = false
+        }
+      })
     }
   }
 }
@@ -392,5 +611,11 @@ animation: myfind-out 3s;
 .el-table__header-wrapper thead div{
   background: #324157;
   color: white;
+}
+</style>
+<style>
+.el-alert{
+  width: 350px;
+  margin: 0 auto;
 }
 </style>
