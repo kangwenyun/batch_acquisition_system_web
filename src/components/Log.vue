@@ -13,7 +13,7 @@
       </div>
       <el-table
         :data="logData"
-        style="width: 100%;margin-top: 40px;">
+        style="width: 100%;margin-top: 5px;">
         <el-table-column
             prop="time"
             label="时间"
@@ -79,8 +79,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .content_wrap{
-    max-width: 960px;
-    min-width: 372px;
     margin: 32px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
@@ -89,8 +87,6 @@ export default {
     position: relative;
 }
 .log_date{
-    position: absolute !important;
-    right: 0;
     width: 258px !important;
 }
 </style>

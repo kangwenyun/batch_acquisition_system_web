@@ -158,6 +158,7 @@ export default {
 .proLine{
     position: relative;
     width: 500px;
+    margin: 0 auto;
 }
 .addBatch{
     height: 30px !important;

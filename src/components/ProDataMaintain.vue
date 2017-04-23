@@ -1,5 +1,5 @@
 <template>
-  <div class="proDataMaintain">
+  <div class="maintain">
     <div class="find">
         <i class="el-icon-edit icon_pos" v-on:mouseenter="edit"></i>
         <el-button :class="{show: edit_icon, hide: unedit_icon}" @click="editData">修改</el-button>
@@ -157,7 +157,7 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'proDataMaintain',
   data () {
     return {
       edit_icon: true,
@@ -511,6 +511,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.maintain{
+  margin-top: 35px;
+}
 .show{
   display: inline-block;
 }

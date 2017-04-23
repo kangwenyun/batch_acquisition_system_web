@@ -129,7 +129,7 @@ export default {
 <style scoped>
 .perInfo{
   width: 480px;
-  margin: 0 auto;
+  margin: 50px auto;
 }
 .clearfix:before,
 .clearfix:after {

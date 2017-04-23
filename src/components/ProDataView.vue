@@ -158,6 +158,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.view{
+  margin-top: 35px;
+}
 .find_input{
   display: inline-block;
   width: 75%;

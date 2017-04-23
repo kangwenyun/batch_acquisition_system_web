@@ -73,6 +73,17 @@
         </el-menu>
       </div>
         <div class="detailData">
+          <el-badge value="new" class="item" 
+            :class="{show:newData,hide:noData}">
+            <el-button size="small" icon="star-off" @click="newMessage">您有新消息</el-button>
+          </el-badge>
+          <el-dialog title="新数据" v-model="dialogVisible">
+            <span>这是一段信息</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          </span>
+          </el-dialog>
           <router-view></router-view>
         </div>
     </div>
@@ -90,7 +101,10 @@ export default {
     return {
       activeIndex: 'proline',
       showText: false,
-      hideText: true
+      hideText: true,
+      noData: false,
+      newData: true,
+      dialogVisible: false
     }
   },
   methods: {
@@ -105,6 +119,9 @@ export default {
     outHide () {
       this.showText = !this.showText
       this.hideText = !this.hideText
+    },
+    newMessage () {
+      this.dialogVisible = true
     }
   }
 }
@@ -204,6 +221,7 @@ export default {
     width: 90%;
     margin: 0 auto;
     padding: 10px 20px;
+    position: relative;
 }
 .footer{
     text-align: center;
@@ -216,10 +234,20 @@ export default {
     width: 90%;
 }
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+    margin-top: 60px;
+}
+.item {
+    position: absolute !important;
+    right: 40px;
+}
+.show{
+    display: block;
+}
+.hide{
+    display: none !important;
 }
 </style>
