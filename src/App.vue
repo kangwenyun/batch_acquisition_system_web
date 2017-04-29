@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     handleClick () {
-    //   console.log('12')
+    //   console.log('1')
     },
     overShow () {
       console.log('12')
@@ -137,6 +137,7 @@ export default {
     line-height: 60px;
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
 }
 .navMenu{
@@ -219,6 +220,7 @@ export default {
     max-width: 1000px;
     min-width: 650px;
     width: 90%;
+    min-height: 524px;
     margin: 0 auto;
     padding: 10px 20px;
     position: relative;
@@ -230,7 +232,6 @@ export default {
     border-top: 1px solid #c0cdd9;
     position: absolute !important;
     left: 5%;
-    bottom: 0;  
     width: 90%;
 }
 #app {
@@ -249,5 +250,13 @@ export default {
 }
 .hide{
     display: none !important;
+}
+.el-button{
+    background-color: #20a0ff;
+    color: white;
+}
+.el-button:hover{
+    background-color: #69b946;
+    color: white;
 }
 </style>

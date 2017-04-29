@@ -8,44 +8,72 @@
             <el-col :span="8">
               <div class="photo">
                 <el-upload
-                  action=""
+                  action="http://192.168.1.122:3000/v1/user/photo"
+                  name="photo"
                   :show-file-list="false"
                   :multiple="false"
                   :on-success="handleAvatarSuccess"
-                  :on-error="handleAvatarSuccess"
+                  :on-error="handleAvatarError"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="form.imageUrl" :src="form.imageUrl">
+                  <img v-if="form.imageUrl" :src="form.imageUrl" width="210px">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
               </div>
             </el-col>
             <el-col :span="16">
-              <el-form-item label="登录账号" prop = "user">
-                <el-input v-model="form.user"></el-input>
+              <el-form-item label="登录账号" prop = "user" :label-width="formLabelWidth">
+                <el-input v-model="form.user" class="input_72"></el-input>
               </el-form-item>
-              <el-form-item label="昵称">
-                <el-input v-model="form.nickname"></el-input>
+              <el-form-item label="昵称" :label-width="formLabelWidth">
+                <el-input v-model="form.nickname" class="input_72"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="pwd">
-                <el-input type="password" v-model="form.pwd"></el-input>
+              <el-form-item label="密码" prop="pwd" :label-width="formLabelWidth">
+                <el-input type="password" v-model="form.pwd" class="input_72"></el-input>
               </el-form-item>
-              <el-form-item label="确认密码" prop="pwdAgain">
-                <el-input type="password" v-model="form.pwdAgain"></el-input>
+              <el-form-item label="确认密码" prop="pwdAgain" :label-width="formLabelWidth">
+                <el-input type="password" v-model="form.pwdAgain" class="input_72"></el-input>
               </el-form-item>
-              <el-form-item label="性别" class="item_bottom">
+              <el-form-item label="性别" class="item_bottom" :label-width="formLabelWidth">
                 <el-radio-group v-model="form.sex">
                     <el-radio label="1">男</el-radio>
-                    <el-radio label="2" class="right">女</el-radio>
+                    <el-radio label="2">女</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="年龄">
-                <el-input v-model="form.age"></el-input>
+              <el-form-item label="生日" :label-width="formLabelWidth">
+                <el-date-picker
+                  v-model="form.birthday"
+                  class="input_72"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
               </el-form-item>
-              <el-form-item label="工作">
-                <el-input v-model="form.job"></el-input>
+              <el-form-item label="工作" :label-width="formLabelWidth">
+                <el-input v-model="form.job" class="input_72"></el-input>
               </el-form-item>
-              <el-form-item label="权限级别" prop="level">
-                <el-input v-model.number="form.level"></el-input>
+              <el-form-item label="权限级别" prop="level" :label-width="formLabelWidth">
+                <el-input v-model.number="form.level" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="何时进入公司？" :label-width="formLabelWidth">
+                <el-input v-model="form.joinday" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="来自哪里？" :label-width="formLabelWidth">
+                <el-input v-model="form.area" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="爱好" :label-width="formLabelWidth">
+                <el-input v-model="form.habit" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="电话号" :label-width="formLabelWidth">
+                <el-input v-model="form.phone" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="微信号" :label-width="formLabelWidth">
+                <el-input v-model.number="form.weixin" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="qq号" :label-width="formLabelWidth">
+                <el-input v-model.number="form.qq" class="input_72"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱" :label-width="formLabelWidth">
+                <el-input v-model="form.email" class="input_72"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button @click="submitForm('form')" class="width_100percent">立即注册</el-button>
@@ -58,6 +86,8 @@
   </div>
 </template>
 <script>
+// var ip = 'http://192.168.1.122:3000/v1'
+var ip = 'http://192.168.137.1:3000/v1'
 export default {
   name: 'register',
   data () {
@@ -71,16 +101,31 @@ export default {
       }
     }
     return {
+      registUrl: ip + '/user/regist',
+      formLabelWidth: '120px',
       form: {
+        path: '',
         imageUrl: '', // src/assets/a.jpg
         user: '',
         nickname: '',
         pwd: '',
         pwdAgain: '',
         sex: '1',
-        age: '',
+        birthday: '1977-01-01',
         job: '',
-        level: ''
+        level: '',
+        joinday: '',
+        area: '',
+        habit: '',
+        phone: '',
+        weixin: '',
+        qq: '',
+        email: ''
+      },
+      pickerOptions: {
+        disabledDate (time) {
+          return time.getTime() > Date.now() - 8.64e7
+        }
       },
       rules: {
         user: [
@@ -103,16 +148,38 @@ export default {
     submitForm (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          alert('submit!')
-        } else {
-          console.log('error submit!!')
-          return false
+          this.regist()
         }
       })
     },
+    regist () {
+      var vm = this
+      vm.$http.post(this.registUrl, { 'userid': vm.form.user, 'passwd': vm.form.pwd, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'level': vm.form.level, 'photo': vm.form.path, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email })
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                  // 跳转到登录界面
+                  window.location.href = '#/login'
+                } else {
+                  this.$alert(response.body.msg, '注册失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '注册失败', {
+                  confirmButtonText: '确定'
+                })
+              })
+    },
     handleAvatarSuccess (res, file) {
-      console.log('21:' + file)
-      this.imageUrl = URL.createObjectURL(file.raw)
+      this.form.path = res.path
+      this.form.imageUrl = 'http://192.168.1.122:3000' + res.path
+    },
+    handleAvatarError (res, file) {
+      this.$message.error('上传失败TT')
     },
     beforeAvatarUpload (file) {
       const isJPGOrPNG = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -179,11 +246,8 @@ export default {
 .el-input{
     display: block !important;
 }
-.el-input__inner{
-    width: 58% !important;
-}
-label{
-    width: 100px;
+.input_72{
+    width: 72% !important;
 }
 .el-form-item__error{
     top: 25% !important;
@@ -200,11 +264,3 @@ label{
     margin-left: -300px;
 }
 </style>
-<!--<style>
-.navMenu,.nav{
-    display: none !important;
-}
-#header_text{
-    display: -webkit-inline-box;
-}
-</style>-->

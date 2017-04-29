@@ -34,16 +34,6 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="line"></div>
-    <div class="content_tree">
-      <el-tree :data="detailData" 
-          :props="defaultProps" 
-          empty-text="还没有数据哦~~~"
-          @node-click="handleNodeClick"
-          highlight-current
-          default-expand-all
-          class="tree"></el-tree>
-    </div>
 </div>
 </template>
 
@@ -51,14 +41,12 @@
 export default {
   name: 'checkallbatch',
   data () {
+    var ip = 'http://192.168.137.1:3000/v1'
+    // var ip = 'http://192.168.1.122:3000/v1'
     return {
-      batchData: [],
-      // 下面的tree
-      detailData: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+      getAllBatchUrl: ip + '/batch/getallBatch',
+      getBatchDetialThroughBatchidUrl: ip + '/batch/getBatchDetialThroughBatchid',
+      batchData: []
     }
   },
   created () {
@@ -66,44 +54,71 @@ export default {
   },
   methods: {
     load () {
-      var bdata = [{
-        id: 'A1',
-        totalNum: 50,
-        alreadyNum: 1,
-        detailData: [{
-          label: 'A1-批次货物总数：50;批次货物已有数：1',
-          children: [{
-            label: 'T1-托盘总数：1',
-            children: [
-                {label: '1-类型：A；录入时间：2017-04-10 18:02:41；备注：0'}
-            ]
-          }]
-        }],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        }
-      }, {
-        id: 'A2',
-        totalNum: '50',
-        alreadyNum: '0',
-        detailData: [{
-          label: 'A2-批次货物总数：50;批次货物已有数：0',
-          children: []
-        }],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        }
-      }]
-      bdata.forEach(function (element) {
-        this.batchData.push(element)
-      }, this)
-      this.rowClick(this.batchData[0])
+      var vm = this
+      vm.$http.get(this.getAllBatchUrl)
+              .then((response) => {
+                if (response.body.success) {
+                  var finish = response.body.finish // 已完成的批次
+                  finish.forEach(function (element) {
+                    var data = {
+                      id: element.batchid,
+                      totalNum: element.batchsum,
+                      alreadyNum: element.batchcurrentamount,
+                      detailData: [{
+                        label: element.batchid + '-批次货物总数：' + element.batchsum + ';批次货物已有数：' + element.batchcurrentamount,
+                        children: []
+                      }],
+                      defaultProps: {
+                        children: 'children',
+                        label: 'label'
+                      }
+                    }
+                    this.push(data)
+                  }, this.batchData)
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
     },
     rowClick (row) {
-      console.log(row.detailData)
-      this.detailData = row.detailData
+      var vm = this
+      vm.$http.post(this.getBatchDetialThroughBatchidUrl, {'batchid': row.id})
+              .then((response) => {
+                if (response.body.success) {
+                  if (row.detailData[0].children.length === 0) {
+                    var trayNum = response.body.list.length
+                    response.body.list.forEach(function (element) {
+                      var data = {
+                        label: element.tray + '-托盘总数：' + trayNum + '；此托盘货物总数：' + element.length,
+                        children: []
+                      }
+                      element.forEach(function (ele) {
+                        data.label = ele.tray + '-托盘总数：' + trayNum + '；此托盘货物总数：' + element.length
+                        this.push({label: ele.number + '-类型：' + ele.type_length + '*' + ele.type_width + '*' + ele.type_high + '；录入时间：' + ele.time + '；备注：' + ele.flag})
+                      }, data.children)
+                      this.push(data)
+                    }, row.detailData[0].children)
+                  }
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
     },
     handleNodeClick (data) {
       console.log(data)

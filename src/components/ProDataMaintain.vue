@@ -46,34 +46,39 @@
           @current-change="handleCurrentChange"
           :row-class-name="tableRowClassName">
           <el-table-column
-              prop="id"
-              label="id"
-              width="100">
-          </el-table-column>
-          <el-table-column
               prop="batchId"
-              label="批次号"
-              width="100">
+              label="批次号">
           </el-table-column>
           <el-table-column
               prop="trayId"
-              label="托盘号"
-              width="100">
+              label="托盘号">
           </el-table-column>
           <el-table-column
               prop="proId"
-              label="货物号"
-              width="100">
+              label="货物号">
           </el-table-column>
           <el-table-column
-              prop="proType"
-              label="货物类型"
-              width="100">
+              prop="number"
+              label="批次序号">
+          </el-table-column>
+          <el-table-column label="货物类型">
+            <el-table-column
+              prop="type_length"
+              label="长">
+            </el-table-column>
+            <el-table-column
+              prop="type_width"
+              label="宽">
+            </el-table-column>
+            <el-table-column
+              prop="type_high"
+              label="高">
+            </el-table-column>
           </el-table-column>
           <el-table-column
               prop="time"
               label="录入时间"
-              width="200">
+              :width="width">
           </el-table-column>
           <el-table-column
               prop="flag"
@@ -83,9 +88,6 @@
     </el-row>
     <el-dialog title="货物数据修改" v-model="editDialogFormVisible" :close-on-click-modal="false">
         <el-form ref="editForm" :model="editForm" :rules="changeDataRules">
-            <el-form-item label="id" :label-width="formLabelWidth">
-                <el-input v-model.number="editForm.id" disabled></el-input>
-            </el-form-item>
             <el-form-item label="批次号" :label-width="formLabelWidth" prop = "batchId">
                 <el-input v-model="editForm.batchId"> </el-input>
             </el-form-item>
@@ -95,8 +97,17 @@
             <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
                 <el-input v-model="editForm.proId"> </el-input>
             </el-form-item>
-            <el-form-item label="货物类型" :label-width="formLabelWidth" prop = "proType">
-                <el-input v-model="editForm.proType"></el-input>
+            <el-form-item label="批次序号" :label-width="formLabelWidth" prop = "number">
+                <el-input v-model="editForm.number"> </el-input>
+            </el-form-item>
+            <el-form-item label="货物类型（长）" :label-width="formLabelWidth" prop = "type_length">
+                <el-input v-model="editForm.type_length"></el-input>
+            </el-form-item>
+            <el-form-item label="货物类型（宽）" :label-width="formLabelWidth" prop = "type_width">
+                <el-input v-model="editForm.type_width"></el-input>
+            </el-form-item>
+            <el-form-item label="货物类型（高）" :label-width="formLabelWidth" prop = "type_high">
+                <el-input v-model="editForm.type_high"></el-input>
             </el-form-item>
             <el-form-item label="录入时间" :label-width="formLabelWidth">
                 <el-date-picker
@@ -129,8 +140,17 @@
             <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
                 <el-input v-model="plusForm.proId"> </el-input>
             </el-form-item>
-            <el-form-item label="货物类型" :label-width="formLabelWidth" prop = "proType">
-                <el-input v-model="plusForm.proType"></el-input>
+            <el-form-item label="批次序号" :label-width="formLabelWidth" prop = "number">
+                <el-input v-model="plusForm.number"> </el-input>
+            </el-form-item>
+            <el-form-item label="货物类型（长）" :label-width="formLabelWidth" prop = "type_length">
+                <el-input v-model="editForm.type_length"></el-input>
+            </el-form-item>
+            <el-form-item label="货物类型（宽）" :label-width="formLabelWidth" prop = "type_width">
+                <el-input v-model="editForm.type_width"></el-input>
+            </el-form-item>
+            <el-form-item label="货物类型（高）" :label-width="formLabelWidth" prop = "type_high">
+                <el-input v-model="editForm.type_high"></el-input>
             </el-form-item>
             <el-form-item label="录入时间" :label-width="formLabelWidth">
                 <el-date-picker
@@ -159,7 +179,11 @@
 export default {
   name: 'proDataMaintain',
   data () {
+    // var ip = 'http://192.168.1.122:3000/v1'
+    var ip = 'http://192.168.137.1:3000/v1'
     return {
+      getproductlistUrl: ip + '/product/getproductlist',
+      changeproductUrl: ip + '/product/changeproduct',
       edit_icon: true,
       unedit_icon: false,
       plus_icon: false,
@@ -183,17 +207,20 @@ export default {
       proData: [], // 表格里当前展示的数据
       findData: [], // 用于查找的下拉列表里的数据
       saveData: [], // 保存表格里的所有数据
+      width: '180px',
       current: -1, // 表示未选中任何行
       current_row: [],
       formLabelWidth: '100px',
       editDialogFormVisible: false,
       plusDialogFormVisible: false,
       editForm: {
-        id: '',
         batchId: '',
         trayId: '',
         proId: '',
-        proType: '',
+        number: '',
+        type_length: '',
+        type_width: '',
+        type_high: '',
         time: '',
         flag: ''
       },
@@ -201,7 +228,10 @@ export default {
         batchId: '',
         trayId: '',
         proId: '',
-        proType: '',
+        number: '',
+        type_length: '',
+        type_width: '',
+        type_high: '',
         time: '',
         flag: ''
       },
@@ -215,8 +245,17 @@ export default {
         proId: [
           {required: true, message: '请输入货物号'}
         ],
-        proType: [
-          {required: true, message: '请输入货物类型'}
+        number: [
+          {required: true, message: '请输入批次序号'}
+        ],
+        type_length: [
+          {required: true, message: '请输入货物类型（长）'}
+        ],
+        type_width: [
+          {required: true, message: '请输入货物类型（宽）'}
+        ],
+        type_high: [
+          {required: true, message: '请输入货物类型（高）'}
         ],
         flag: [
           {required: true, message: '请输入备注值'},
@@ -227,41 +266,43 @@ export default {
   },
   created () {
     this.load()
-  },
-  mounted () {
-    this.findData = this.loadAll()
+    this.loadAll()
   },
   methods: {
     load () {
-      var data = [{
-        id: '',
-        batchId: 'A1',
-        trayId: 'T1',
-        proId: '1',
-        proType: 'A',
-        time: '2017-04-13 08:24:36',
-        flag: 0
-      }, {
-        id: '',
-        batchId: 'A2',
-        trayId: 'T1',
-        proId: '1',
-        proType: 'A',
-        time: '2017-04-13 08:24:36',
-        flag: 0
-      }, {
-        id: '',
-        batchId: 'A3',
-        trayId: 'T1',
-        proId: '1',
-        proType: 'A',
-        time: '2017-04-13 08:24:36',
-        flag: 1
-      }]
-      data.forEach(function (element) {
-        this.proData.push(element)
-        this.saveData.push(element)
-      }, this)
+      var vm = this
+      vm.$http.get(this.getproductlistUrl)
+              .then((response) => {
+                if (response.body.success) {
+                  response.body.productlist.forEach(function (element) {
+                    var data = {
+                      id: element.productid,
+                      batchId: element.batchid,
+                      trayId: element.tray,
+                      proId: element.productid,
+                      number: element.number,
+                      type_length: element.type_length,
+                      type_width: element.type_width,
+                      type_high: element.type_high,
+                      time: element.time,
+                      flag: element.flag
+                    }
+                    this.proData.push(data)
+                    this.saveData.push(data)
+                  }, this)
+                  this.loadAll()
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
     },
     edit () {
       this.edit_icon = !this.edit_icon
@@ -372,27 +413,28 @@ export default {
     loadAll () {
       var data = []
       this.proData.forEach(function (element) {
-        var a = 'id - ' + element.id + '; 批次号 - ' + element.batchId
+        var a = ' 批次号 - ' + element.batchId
         a += '; 托盘号 - ' + element.trayId + '; 货物号 - ' + element.proId
-        a += '; 货物类型 - ' + element.proType
+        a += '; 批次序号 - ' + element.number + '; 货物类型 - （长）' + element.type_length
+        a += ';（宽）' + element.type_width + ';（高）' + element.type_high
         a += '; 录入时间 - ' + element.time + '; 备注 - ' + element.flag
         this.push({value: a})
       }, data)
-      return data
+      this.findData = data
     },
     handleSelect (item) {
       var value = item.value.split(';')
-      var data = {
-        id: value[0].split(' - ')[1],
-        batchId: value[1].split(' - ')[1],
-        trayId: value[2].split(' - ')[1],
-        proId: value[3].split(' - ')[1],
-        proType: value[4].split(' - ')[1],
-        time: value[5].split(' - ')[1],
-        flag: value[6].split(' - ')[1]
-      }
-      this.proData = []
-      this.proData.push(data)
+      this.proData = [{
+        batchId: value[0].split(' - ')[1],
+        trayId: value[1].split(' - ')[1],
+        proId: value[2].split(' - ')[1],
+        number: value[3].split(' - ')[1],
+        type_length: value[4].split(' ） ')[1],
+        type_width: value[5].split(' ） ')[1],
+        type_high: value[6].split(' ） ')[1],
+        time: value[7].split(' - ')[1],
+        flag: value[8].split(' - ')[1]
+      }]
     },
     handleCurrentChange (currentRow) {
       // console.log(currentRow)
@@ -417,13 +459,35 @@ export default {
     editData () {
       if (this.hasSelect()) {
         this.editDialogFormVisible = true
-        this.editForm.id = this.current_row.id
         this.editForm.batchId = this.current_row.batchId
         this.editForm.trayId = this.current_row.trayId
         this.editForm.proId = this.current_row.proId
-        this.editForm.proType = this.current_row.proType
+        this.editForm.number = this.current_row.number
+        this.editForm.type_length = this.current_row.type_length
+        this.editForm.type_width = this.current_row.type_width
+        this.editForm.type_high = this.current_row.type_high
         this.editForm.time = this.current_row.time
         this.editForm.flag = this.current_row.flag
+        var vm = this
+        vm.$http.post(this.changeproductUrl, {'productid': this.editForm.proId, 'batchid': this.editForm.batchId, 'number': this.editForm.number, 'type_length': this.editForm.type_length, 'type_high': this.editForm.type_high, 'type_width': this.editForm.type_width, 'tray': this.editForm.trayId, 'time': this.editForm.time, 'flag': this.editForm.flag})
+                .then((response) => {
+                  if (response.body.success) {
+                    this.$message({
+                      message: response.body.msg,
+                      type: 'success'
+                    })
+                  } else {
+                    this.$message({
+                      message: response.body.msg,
+                      type: 'error'
+                    })
+                  }
+                }, (response) => {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                })
       }
     },
     addData () {
@@ -476,7 +540,10 @@ export default {
             batchId: this.editForm.batchId,
             trayId: this.editForm.trayId,
             proId: this.editForm.proId,
-            proType: this.editForm.proType,
+            number: this.editForm.number,
+            type_length: this.editForm.type_length,
+            type_width: this.editForm.type_width,
+            type_high: this.editForm.type_high,
             time: this.editForm.time,
             flag: this.editForm.flag
           }
@@ -495,7 +562,10 @@ export default {
             batchId: this.plusForm.batchId,
             trayId: this.plusForm.trayId,
             proId: this.plusForm.proId,
-            proType: this.plusForm.proType,
+            number: this.plusForm.number,
+            type_length: this.editForm.type_length,
+            type_width: this.editForm.type_width,
+            type_high: this.editForm.type_high,
             time: plusTime.getFullYear() + '-' + plusTime.getMonth() + '-' + plusTime.getDate() + ' ' + plusTime.getHours() + ':' + plusTime.getMinutes() + ':' + plusTime.getSeconds(),
             flag: this.plusForm.flag
           }

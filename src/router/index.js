@@ -25,7 +25,7 @@ export default new Router({
       component: Hello
     },
     {
-      path: '/login',
+      path: '/',
       name: 'Login',
       component: Login
     },
@@ -37,57 +37,68 @@ export default new Router({
     {
       path: '/proline',
       name: 'ProLine',
-      component: ProLine
+      component: ProLine,
+      meta: { requiresId: true }
     },
     {
       path: '/checkallbatch',
       name: 'CheckAllBatch',
-      component: CheckAllBatch
+      component: CheckAllBatch,
+      meta: { requiresId: true }
     },
     {
       path: '/checkacceptancebatch',
       name: 'CheckAcceptanceBatch',
-      component: CheckAcceptanceBatch
+      component: CheckAcceptanceBatch,
+      meta: { requiresId: true }
     },
     {
       path: '/checkunderreviewbatch',
       name: 'CheckUnderReviewBatch',
-      component: CheckUnderReviewBatch
+      component: CheckUnderReviewBatch,
+      meta: { requiresId: true }
     },
     {
       path: '/checkfinishedbatch',
       name: 'CheckFinishedBatch',
-      component: CheckFinishedBatch
+      component: CheckFinishedBatch,
+      meta: { requiresId: true }
     },
     {
       path: '/prodataview',
       name: 'ProDataView',
-      component: ProDataView
+      component: ProDataView,
+      meta: { requiresId: true }
     },
     {
       path: '/prodatamaintain',
       name: 'ProDataMaintain',
-      component: ProDataMaintain
+      component: ProDataMaintain,
+      meta: { requiresId: true }
     },
     {
       path: '/log',
       name: 'Log',
-      component: Log
+      component: Log,
+      meta: { requiresId: true }
     },
     {
       path: '/level',
       name: 'Level',
-      component: Level
+      component: Level,
+      meta: { requiresId: true }
     },
     {
       path: '/perinfo',
       name: 'PerInfo',
-      component: PerInfo
+      component: PerInfo,
+      meta: { requiresId: true }
     },
     {
       path: '/changepasswd',
       name: 'ChangePasswd',
-      component: ChangePasswd
+      component: ChangePasswd,
+      meta: { requiresId: true }
     }
   ]
 })

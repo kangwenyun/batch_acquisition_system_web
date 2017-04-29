@@ -8,13 +8,13 @@
                         <el-input v-model="form.user" disabled class="input_85"></el-input>
                     </el-form-item>
                     <el-form-item label="原密码  " prop="oldPwd" label-width="100px">
-                        <el-input v-model="form.nickname" class="input_85"></el-input>
+                        <el-input v-model="form.oldPwd" class="input_85"></el-input>
                     </el-form-item>
                     <el-form-item label="新密码" prop="newPwd" label-width="100px">
-                        <el-input type="password" v-model="form.pwd" class="input_85"></el-input>
+                        <el-input type="password" v-model="form.newPwd" class="input_85"></el-input>
                     </el-form-item>
                     <el-form-item label="确认新密码" prop="newPwdAgain" label-width="100px">
-                        <el-input type="password" v-model="form.pwdAgain" class="input_85"></el-input>
+                        <el-input type="password" v-model="form.newPwdAgain" class="input_85"></el-input>
                     </el-form-item>
                     <el-form-item label-width="100px">
                         <el-button @click="submitForm('form')" class="width_100percent">立即修改</el-button>
@@ -29,16 +29,19 @@
 export default {
   name: 'changepasswd',
   data () {
+    // var ip = 'http://192.168.1.122:3000/v1'
+    var ip = 'http://192.168.137.1:3000/v1'
     var pwdAgainVali = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入新密码'))
-      } else if (value !== this.form.pwd) {
+      } else if (value !== this.form.oldPwd) {
         callback(new Error('两次新密码输入不一致!'))
       } else {
         callback()
       }
     }
     return {
+      passwdUrl: ip + '/user/changepasswd',
       form: {
         user: sessionStorage.getItem('userId'),
         oldPwd: '',
@@ -62,12 +65,32 @@ export default {
     submitForm (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          this.changePwd()
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    changePwd () {
+      var vm = this
+      vm.$http.post(this.passwdUrl, {'userid': vm.form.user, 'oldpasswd': vm.form.oldPwd, 'newpasswd': vm.form.newPwd})
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$alert(response.body.msg, '密码修改失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '密码修改失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     }
   }
 }

@@ -17,5 +17,36 @@ new Vue({
   router,
   template: '<App/>',
   components: { App },
-  render: h => h(App)
+  render: h => h(App),
+  created () {
+    this.redrct()
+  },
+  methods: {
+    redrct () {
+      router.beforeEach((to, from, next) => {
+        if (to.matched.some(record => record.meta.requiresId)) {
+          // this route requires Id, check if logged in
+          // if not, redirect to login page.
+          if (!this.loggedIn()) {
+            next({
+              path: '/',
+              query: { redirect: to.fullPath }
+            })
+          } else {
+            next()
+          }
+        } else {
+          next() // 确保一定要调用 next()
+        }
+      })
+    },
+    loggedIn () {
+      var id = sessionStorage.getItem('userId')
+      if (id === null) { // 未登录
+        console.log('未登录')
+        return false
+      }
+      return true
+    }
+  }
 })

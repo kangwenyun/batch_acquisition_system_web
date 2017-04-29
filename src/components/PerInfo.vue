@@ -8,7 +8,17 @@
       <div>
         <el-row>
           <el-col :span="12">
-            <img src="../assets/a.jpg" alt="">
+            <el-upload
+              action="http://192.168.1.122:3000/v1/user/photo"
+              name="photo"
+              :show-file-list="false"
+              :multiple="false"
+              :on-success="handleAvatarSuccess"
+              :on-error="handleAvatarError"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="photo" :src="photo">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </el-col>
           <el-col :span="12">
             <div v-for="o in person" class="info">
@@ -32,14 +42,40 @@
                     <el-radio label="2">女</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="年龄" :label-width="formLabelWidth" prop = "age">
-                <el-input v-model.number="form.age"> </el-input>
+            <el-form-item label="生日" :label-width="formLabelWidth" prop = "birthday">
+                <el-date-picker
+                  v-model="form.birthday"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
             </el-form-item>
             <el-form-item label="工作" :label-width="formLabelWidth" prop = "job">
                 <el-input v-model="form.job"></el-input>
             </el-form-item>
-            <el-form-item label="权限" :label-width="formLabelWidth" prop = "level">
-                <el-input v-model.number="form.level"> </el-input>
+            <el-form-item label="权限：" :label-width="formLabelWidth" prop = "job">
+                <el-input v-model="form.level" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="何时进入公司？" :label-width="formLabelWidth">
+              <el-input v-model="form.joinday" class="input_72"></el-input>
+            </el-form-item>
+            <el-form-item label="来自哪里？" :label-width="formLabelWidth">
+              <el-input v-model="form.area" class="input_72"></el-input>
+            </el-form-item>
+            <el-form-item label="爱好" :label-width="formLabelWidth">
+              <el-input v-model="form.habit" class="input_72"></el-input>
+            </el-form-item>
+            <el-form-item label="电话号" :label-width="formLabelWidth">
+              <el-input v-model="form.phone" class="input_72"></el-input>
+            </el-form-item>
+            <el-form-item label="微信号" :label-width="formLabelWidth">
+              <el-input v-model.number="form.weixin" class="input_72"></el-input>
+            </el-form-item>
+            <el-form-item label="qq号" :label-width="formLabelWidth">
+              <el-input v-model.number="form.qq" class="input_72"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" :label-width="formLabelWidth">
+              <el-input v-model="form.email" class="input_72"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -54,32 +90,42 @@
 export default {
   name: 'perInfo',
   data () {
+    // var ip = 'http://192.168.1.122:3000/v1'
+    var ip = 'http://192.168.137.1:3000/v1'
     return {
+      changePerInfoUrl: ip + '/user/changeuserinformation',
+      getPerInfoUrl: ip + '/user/getuserinfo',
       person: [],
       dialogFormVisible: false,
-      formLabelWidth: '100px',
+      formLabelWidth: '120px',
+      path: '',
+      photo: '',
       form: {
-        id: '',
+        id: sessionStorage.getItem('userId'),
         nickname: '',
         sex: '',
-        age: '',
+        birthday: '',
         job: '',
-        level: ''
+        level: '',
+        joinday: '',
+        area: '',
+        habit: '',
+        phone: '',
+        weixin: '',
+        qq: '',
+        email: ''
+      },
+      pickerOptions: {
+        disabledDate (time) {
+          return time.getTime() > Date.now() - 8.64e7
+        }
       },
       rules: {
         nickname: [
           {required: true, message: '请输入昵称'}
         ],
-        age: [
-          {required: true, message: '请输入年龄'},
-          {type: 'number', message: '年龄必须为数字值'}
-        ],
         job: [
           {required: true, message: '请输入工作'}
-        ],
-        level: [
-          {required: true, message: '请输入权限等级'},
-          {type: 'number', message: '权限等级必须为数字值'}
         ]
       }
     }
@@ -89,15 +135,38 @@ export default {
   },
   methods: {
     load () {
-      var data = [{label: '账号：', name: 'A'},
-                  {label: '昵称：', name: 'A'},
-                  {label: '性别：', name: 'A'},
-                  {label: '年龄：', name: 1},
-                  {label: '工作：', name: 'A'},
-                  {label: '权限：', name: 1}]
-      data.forEach(function (element) {
-        this.push(element)
-      }, this.person)
+      var vm = this
+      var data = []
+      vm.$http.post(this.getPerInfoUrl, {'userid': vm.form.id})
+              .then((response) => {
+                if (response.body.success) {
+                  this.photo = this.ip + response.body.photo
+                  data = [{label: '账号：', name: response.body.userid},
+                          {label: '昵称：', name: response.body.username},
+                          {label: '性别：', name: response.body.sex},
+                          {label: '生日：', name: response.body.birthday},
+                          {label: '工作：', name: response.body.job},
+                          {label: '权限：', name: response.body.level},
+                          {label: '何时进入公司？', name: response.body.joinday},
+                          {label: '来自哪里？：', name: response.body.area},
+                          {label: '爱好：', name: response.body.habit},
+                          {label: '电话号：', name: response.body.phone},
+                          {label: '微信号：', name: response.body.weixin},
+                          {label: 'qq号：', name: response.body.qq},
+                          {label: '邮箱：', name: response.body.email}]
+                  data.forEach(function (element) {
+                    this.push(element)
+                  }, this.person)
+                } else {
+                  this.$alert(response.body.msg, '个人信息获取失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '个人信息获取失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     },
     edit () {
       this.form.id = this.person[0].name
@@ -106,6 +175,13 @@ export default {
       this.form.age = this.person[3].name
       this.form.job = this.person[4].name
       this.form.level = this.person[5].name
+      this.form.joinday = this.person[6].name
+      this.form.area = this.person[7].name
+      this.form.habit = this.person[8].name
+      this.form.phone = this.person[9].name
+      this.form.weixin = this.person[10].name
+      this.form.qq = this.person[11].name
+      this.form.email = this.person[12].name
       this.dialogFormVisible = true
     },
     submitForm (form) {
@@ -116,10 +192,57 @@ export default {
                          {label: '性别：', name: this.form.sex === '1' ? '男' : '女'},
                          {label: '年龄：', name: this.form.age},
                          {label: '工作：', name: this.form.job},
-                         {label: '权限：', name: this.form.level}]
+                         {label: '权限：', name: this.form.level},
+                         {label: '何时进入公司？', name: this.form.joinday},
+                         {label: '来自哪里？：', name: this.form.area},
+                         {label: '爱好：', name: this.form.habit},
+                         {label: '电话号：', name: this.form.phone},
+                         {label: '微信号：', name: this.form.weixin},
+                         {label: 'qq号：', name: this.form.qq},
+                         {label: '邮箱：', name: this.form.email}]
+          this.chanchangePerInfo()
           this.dialogFormVisible = false
         }
       })
+    },
+    handleAvatarSuccess (res, file) {
+      this.path = res.path
+      this.photo = 'http://192.168.1.122:3000' + res.path
+    },
+    handleAvatarError (res, file) {
+      this.$message.error('上传失败TT')
+    },
+    beforeAvatarUpload (file) {
+      const isJPGOrPNG = file.type === 'image/jpeg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPGOrPNG) {
+        this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPGOrPNG && isLt2M
+    },
+    changePerInfo () {
+      var vm = this
+      vm.$http.post(this.changePerInfoUrl, {'userid': vm.form.id, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email})
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$alert(response.body.msg, '个人信息修改失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '个人信息修改失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     }
   }
 }

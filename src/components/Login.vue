@@ -35,7 +35,7 @@
                     <div class="login_bottom">
                         <a href="#" class="bottom">忘记密码?</a>
                         <span class="dividing_line"></span>
-                        <a href="#" class="bottom">注册新账号</a>
+                        <a href="#/register" class="bottom">注册新账号</a>
                     </div>
                 </div>
             </el-col>
@@ -45,10 +45,13 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'login',
   data () {
+    // var ip = 'http://192.168.14.131:3000/v1'
+    // var ip = 'http://192.168.1.122:3000/v1'
+    var ip = 'http://192.168.137.1:3000/v1'
     return {
-      loginUrl: '',
+      loginUrl: ip + '/user/login',
       form: {
         user: '',
         pwd: '',
@@ -69,8 +72,6 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // alert('submit!');
-          sessionStorage.setItem('userId', this.form.user)
           this.login()
         } else {
           console.log('error submit!!')
@@ -81,15 +82,20 @@ export default {
     },
     login () {
       var vm = this
-      var user = 'userid:' + vm.form.user
-      var pwd = 'passwd:' + vm.form.pwd
-      vm.$http.post(this.loginUrl, user, pwd)
+      vm.$http.post(this.loginUrl, {'userid': vm.form.user, 'passwd': vm.form.pwd})
               .then((response) => {
-                console.log('12:' + response)
-      // 跳转到主界面
+                if (response.body.success) {
+                  sessionStorage.setItem('userId', this.form.user)
+                  window.location.href = '#/proLine'
+                } else {
+                  this.$alert(response.body.msg, '登录失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
               }, (response) => {
-                console.log('34:' + response.error)
-                vm.form.error = true
+                this.$alert(response.body.msg, '登录失败1', {
+                  confirmButtonText: '确定'
+                })
               })
     },
     clearUserInput () {
@@ -104,6 +110,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.navMenu,.nav{
+    display: none !important;
+}
+#header_text{
+    display: -webkit-inline-box;
+}
 .content_wrap{
     max-width: 960px;
     min-width: 372px;
@@ -185,11 +197,3 @@ a:hover{
     color: red;
 }
 </style>
-<!--<style>
-.navMenu,.nav{
-    display: none !important;
-}
-#header_text{
-    display: -webkit-inline-box;
-}
-</style>-->

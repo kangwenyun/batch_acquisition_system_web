@@ -3,7 +3,8 @@
     <el-table
         :data="levelData"
         highlight-current-row
-        style="width: 100%;margin-top: 40px;">
+        style="width: 100%;margin-top: 40px;"
+        empty-text="对不起，您没有权限查看权限信息">
         <el-table-column
             prop="id"
             label="账号">
@@ -44,7 +45,10 @@
 export default {
   name: 'level',
   data () {
+    // var ip = 'http://192.168.1.122:3000/v1'
+    var ip = 'http://192.168.137.1:3000/v1'
     return {
+      changeLevelUrl: ip + '/user/getpersonlist',
       levelData: [],
       dialogFormVisible: false,
       formLabelWidth: '70px',
@@ -65,22 +69,29 @@ export default {
   },
   methods: {
     load () {
-      var data = [{
-        id: 'admin',
-        userName: 'admin',
-        level: '0'
-      }, {
-        id: 'admin',
-        userName: 'admin',
-        level: '1'
-      }, {
-        id: 'admin',
-        userName: 'admin',
-        level: '0'
-      }]
-      data.forEach(function (element) {
-        this.push(element)
-      }, this.levelData)
+      var vm = this
+      vm.$http.post(this.changeLevelUrl, {'userid': sessionStorage.getItem('userId')})
+              .then((response) => {
+                if (response.body.success) {
+                  var list = response.body.personlist
+                  list.forEach(function (element) {
+                    var data = {
+                      id: element.userid,
+                      userName: element.username,
+                      level: element.level
+                    }
+                    this.push(data)
+                  }, this.levelData)
+                } else {
+                  this.$alert(response.body.msg, '登录失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '登录失败1', {
+                  confirmButtonText: '确定'
+                })
+              })
     },
     edit (index, row) {
     //   console.log(index)
@@ -92,13 +103,30 @@ export default {
     submitForm (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          console.log('succeed~~~')
-        } else {
-          console.log('error submit!!')
-          return false
+          this.changeLevel()
         }
       })
       this.dialogFormVisible = false
+    },
+    changeLevel () {
+      var vm = this
+      vm.$http.post(this.changeLevelUrl, {'userid': vm.form.user, 'newlevel': vm.form.newLevel})
+              .then((response) => {
+                if (response.success) {
+                  this.$message({
+                    message: response.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$alert(response.msg, '权限修改失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.msg, '权限修改失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     }
   }
 }

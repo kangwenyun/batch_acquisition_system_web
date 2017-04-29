@@ -5,23 +5,26 @@
                 :data="batchData"
                 :props="defaultProps"
                 highlight-current
+                default-expand-all
+                accordion
+                :expand-on-click-node="false"
                 node-key="id"
                 @node-click="handleNodeClick">
             </el-tree>
             <i class="el-icon-plus addBatch" @click="dialogFormVisible = true"></i>
             <el-dialog title="增加批次" v-model="dialogFormVisible">
-            <el-form ref="form" :model="form" :rules="rules">
-                <el-form-item label="批次ID" :label-width="formLabelWidth" prop = "label">
-                    <el-input v-model="form.label"></el-input>
-                </el-form-item>
-                <el-form-item label="货物总数" :label-width="formLabelWidth" prop = "totalNum">
-                    <el-input v-model.number="form.totalNum"> </el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submitForm('form')">确 定</el-button>
-            </div>
+              <el-form ref="form" :model="form" :rules="rules">
+                  <el-form-item label="批次ID" :label-width="formLabelWidth" prop = "label">
+                      <el-input v-model="form.label"></el-input>
+                  </el-form-item>
+                  <el-form-item label="货物总数" :label-width="formLabelWidth" prop = "totalNum">
+                      <el-input v-model.number="form.totalNum"> </el-input>
+                  </el-form-item>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                  <el-button @click="dialogFormVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="submitForm('form')">确 定</el-button>
+              </div>
             </el-dialog>
         </div>
     </div>
@@ -31,7 +34,13 @@
 export default {
   name: 'proLine',
   data () {
+    var ip = 'http://192.168.137.1:3000/v1'
+    // var ip = 'http://192.168.1.122:3000/v1'
     return {
+      getAllBatchUrl: ip + '/batch/getallBatch',
+      addBatchUrl: ip + '/batch/addbatch',
+      unaccepttoacceptBatchUrl: ip + '/batch/unaccepttoacceptBatch',
+      accepttocheckBatchUrl: ip + '/accepttocheckBatch',
       batchData: [{
         id: 1,
         label: '未接受的批次',
@@ -75,24 +84,75 @@ export default {
   },
   methods: {
     load () {
-      var data = [{
-        id: 0,
-        label: 'A1'
-      }, {
-        id: 1,
-        label: 'A2'
-      }, {
-        id: 2,
-        label: 'A3'
-      }, {
-        id: 3,
-        label: 'A4'
-      }]
-      data.forEach(function (element) {
-        this.push(element)
-      }, this.batchData[0].children)
+      var vm = this
+      vm.$http.get(this.getAllBatchUrl)
+              .then((response) => {
+                if (response.body.success) {
+                  var unaccept = response.body.unaccept // 未接受的批次
+                  unaccept.forEach(function (element) {
+                    var data = {
+                      'id': element.id,
+                      'label': element.batchid,
+                      'children': [
+                        { 'label': '创建时间:' + element.createtime },
+                        { 'label': '批次总数:' + element.batchsum },
+                        { 'label': '批次已有数:' + element.batchcurrentamount }
+                      ]
+                    }
+                    this.push(data)
+                  }, this.batchData[0].children)
+                  var accept = response.body.accept // 接受的批次
+                  accept.forEach(function (element) {
+                    var data = {
+                      'id': element.id,
+                      'label': element.batchid,
+                      'children': [
+                        { 'label': '创建时间:' + element.createtime },
+                        { 'label': '批次总数:' + element.batchsum },
+                        { 'label': '批次已有数:' + element.batchcurrentamount }
+                      ]
+                    }
+                    this.push(data)
+                  }, this.batchData[1].children)
+                  var check = response.body.check // 审核中的批次
+                  check.forEach(function (element) {
+                    var data = {
+                      'id': element.id,
+                      'label': element.batchid,
+                      'children': [
+                        { 'label': '创建时间:' + element.createtime },
+                        { 'label': '批次总数:' + element.batchsum },
+                        { 'label': '批次已有数:' + element.batchcurrentamount }
+                      ]
+                    }
+                    this.push(data)
+                  }, this.batchData[2].children)
+                  var finish = response.body.finish // 已完成的批次
+                  finish.forEach(function (element) {
+                    var data = {
+                      'id': element.id,
+                      'label': element.batchid,
+                      'children': [
+                        { 'label': '创建时间:' + element.createtime },
+                        { 'label': '批次总数:' + element.batchsum },
+                        { 'label': '批次已有数:' + element.batchcurrentamount }
+                      ]
+                    }
+                    this.push(data)
+                  }, this.batchData[3].children)
+                } else {
+                  this.$alert(response.body.msg, '增加批次失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '增加批次失败1', {
+                  confirmButtonText: '确定'
+                })
+              })
     },
     handleNodeClick (data, node) {
+      var vm = this
       // console.log(data) // data.id当前id
       // console.log('-----')
       // console.log(node)
@@ -105,13 +165,28 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.batchData[0].children.splice(data.id, 1)
-            this.batchData[1].children.push({id: data.id, label: data.label})
+            vm.$http.post(this.unaccepttoacceptBatchUrl, {'batchid': data.label})
+              .then((response) => {
+                if (response.body.success) {
+                  for (var i = 0; i < this.batchData[0].children.length; i++) {
+                    if (this.batchData[0].children[i].label === data.label) {
+                      this.batchData[0].children.splice(i, 1)
+                    }
+                  }
+                  this.batchData[1].children.push({id: data.id, label: data.label})
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
           }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消接受'
-            })
           })
           break
         case 2:
@@ -120,8 +195,27 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.batchData[1].children.splice(data.id, 1)
-            this.batchData[2].children.push({id: data.id, label: data.label})
+            vm.$http.post(this.accepttocheckBatchUrl, {'batchid': data.label})
+              .then((response) => {
+                if (response.body.success) {
+                  for (var i = 0; i < this.batchData[0].children.length; i++) {
+                    if (this.batchData[1].children[i].label === data.label) {
+                      this.batchData[1].children.splice(i, 1)
+                    }
+                  }
+                  this.batchData[2].children.push({id: data.id, label: data.label})
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -132,6 +226,28 @@ export default {
         default:
           break
       }
+    },
+    changeStatus (url, id) {
+      var vm = this
+      vm.$http.post(url, {'batchid': id})
+              .then((response) => {
+                if (response.success) {
+                  this.$message({
+                    message: response.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$message({
+                    message: response.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.msg,
+                  type: 'error'
+                })
+              })
     },
     submitForm (form) {
       this.$refs[form].validate((valid) => {
@@ -148,6 +264,26 @@ export default {
       // console.log('label:' + this.form.label)
       // console.log('totalNum:' + this.form.totalNum)
       this.dialogFormVisible = false
+    },
+    addBatch () {
+      var vm = this
+      vm.$http.post(this.addBatchUrl, {'batchid': vm.form.label, 'batchsum': vm.form.totalNum})
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$alert(response.body.msg, '增加批次失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '增加批次失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     }
   }
 }

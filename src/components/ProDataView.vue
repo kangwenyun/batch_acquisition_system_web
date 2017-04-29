@@ -19,34 +19,39 @@
         style="width: 100%"
         :row-class-name="tableRowClassName">
         <el-table-column
-            prop="id"
-            label="id"
-            width="100">
-        </el-table-column>
-        <el-table-column
             prop="batchId"
-            label="批次号"
-            width="100">
+            label="批次号">
         </el-table-column>
         <el-table-column
             prop="trayId"
-            label="托盘号"
-            width="100">
+            label="托盘号">
         </el-table-column>
         <el-table-column
             prop="proId"
-            label="货物号"
-            width="100">
+            label="货物号">
         </el-table-column>
         <el-table-column
-            prop="proType"
-            label="货物类型"
-            width="100">
+            prop="number"
+            label="批次序号">
+        </el-table-column>
+        <el-table-column label="货物类型">
+          <el-table-column
+            prop="type_length"
+            label="长">
+          </el-table-column>
+          <el-table-column
+            prop="type_width"
+            label="宽">
+          </el-table-column>
+          <el-table-column
+            prop="type_high"
+            label="高">
+          </el-table-column>
         </el-table-column>
         <el-table-column
             prop="time"
             label="录入时间"
-            width="200">
+            :width="width">
         </el-table-column>
         <el-table-column
             prop="flag"
@@ -61,50 +66,56 @@
 export default {
   name: 'view',
   data () {
+    // var ip = 'http://192.168.14.131:3000/v1'
+    // var ip = 'http://192.168.1.122:3000/v1'
+    var ip = 'http://192.168.137.1:3000/v1'
     return {
+      getproductlistUrl: ip + '/product/getproductlist',
       search: '',
       proData: [],
       findData: [],
-      saveData: []
+      saveData: [],
+      width: '200px'
     }
   },
   created () {
     this.load()
   },
-  mounted () {
-    this.findData = this.loadAll()
-  },
   methods: {
     load () {
-      var data = [{
-        id: '',
-        batchId: 'A1',
-        trayId: 'T1',
-        proId: '1',
-        proType: 'A',
-        time: '2017-04-13 08:24:36',
-        flag: 0
-      }, {
-        id: '',
-        batchId: 'A2',
-        trayId: 'T1',
-        proId: '1',
-        proType: 'A',
-        time: '2017-04-13 08:24:36',
-        flag: 0
-      }, {
-        id: '',
-        batchId: 'A3',
-        trayId: 'T1',
-        proId: '1',
-        proType: 'A',
-        time: '2017-04-13 08:24:36',
-        flag: 1
-      }]
-      data.forEach(function (element) {
-        this.proData.push(element)
-        this.saveData.push(element)
-      }, this)
+      var vm = this
+      vm.$http.get(this.getproductlistUrl)
+              .then((response) => {
+                if (response.body.success) {
+                  response.body.productlist.forEach(function (element) {
+                    var data = {
+                      id: element.productid,
+                      batchId: element.batchid,
+                      trayId: element.tray,
+                      proId: element.productid,
+                      number: element.number,
+                      type_length: element.type_length,
+                      type_width: element.type_width,
+                      type_high: element.type_high,
+                      time: element.time,
+                      flag: element.flag
+                    }
+                    this.proData.push(data)
+                    this.saveData.push(data)
+                  }, this)
+                  this.loadAll()
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
     },
     tableRowClassName (row, index) {
       if (row.flag === 1) {
@@ -127,27 +138,28 @@ export default {
     loadAll () {
       var data = []
       this.proData.forEach(function (element) {
-        var a = 'id - ' + element.id + '; 批次号 - ' + element.batchId
+        var a = ' 批次号 - ' + element.batchId
         a += '; 托盘号 - ' + element.trayId + '; 货物号 - ' + element.proId
-        a += '; 货物类型 - ' + element.proType
+        a += '; 批次序号 - ' + element.number + '; 货物类型 - （长）' + element.type_length
+        a += ';（宽）' + element.type_width + ';（高）' + element.type_high
         a += '; 录入时间 - ' + element.time + '; 备注 - ' + element.flag
         this.push({value: a})
       }, data)
-      return data
+      this.findData = data
     },
     handleSelect (item) {
       var value = item.value.split(';')
-      var data = {
-        id: value[0].split(' - ')[1],
-        batchId: value[1].split(' - ')[1],
-        trayId: value[2].split(' - ')[1],
-        proId: value[3].split(' - ')[1],
-        proType: value[4].split(' - ')[1],
-        time: value[5].split(' - ')[1],
-        flag: value[6].split(' - ')[1]
-      }
-      this.proData = []
-      this.proData.push(data)
+      this.proData = [{
+        batchId: value[0].split(' - ')[1],
+        trayId: value[1].split(' - ')[1],
+        proId: value[2].split(' - ')[1],
+        number: value[3].split(' - ')[1],
+        type_length: value[4].split(' ） ')[1],
+        type_width: value[5].split(' ） ')[1],
+        type_high: value[6].split(' ） ')[1],
+        time: value[7].split(' - ')[1],
+        flag: value[8].split(' - ')[1]
+      }]
     },
     addAll () {
       this.proData = this.saveData
