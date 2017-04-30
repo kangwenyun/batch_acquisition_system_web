@@ -141,6 +141,11 @@ export default {
     padding: 0 24px;
     padding-bottom: 50px;
 }
+.el-button:hover{
+    background-color: transparent !important;
+    color: #69b946 !important;
+    border-color: transparent !important;
+}
 </style>
 <style>
 .el-dialog--small {

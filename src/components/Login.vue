@@ -110,12 +110,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.navMenu,.nav{
-    display: none !important;
-}
-#header_text{
-    display: -webkit-inline-box;
-}
 .content_wrap{
     max-width: 960px;
     min-width: 372px;
