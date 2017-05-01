@@ -7,7 +7,7 @@
       </div>
       <div>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="10">
             <el-upload
               action="http://192.168.1.122:3000/v1/user/photo"
               name="photo"
@@ -20,7 +20,7 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="14">
             <div v-for="o in person" class="info">
               {{ o.label + o.name}}
             </div>
@@ -47,7 +47,8 @@
                   v-model="form.birthday"
                   type="date"
                   placeholder="选择日期"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions"
+                  style="width: 100%">
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="工作" :label-width="formLabelWidth" prop = "job">
@@ -57,10 +58,21 @@
                 <el-input v-model="form.level" disabled></el-input>
             </el-form-item>
             <el-form-item label="何时进入公司？" :label-width="formLabelWidth">
-              <el-input v-model="form.joinday" class="input_72"></el-input>
+              <el-date-picker
+                v-model="form.joinday"
+                type="date"
+                placeholder="选择日期"
+                :picker-options="pickerOptions"
+                style="width: 100%">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="来自哪里？" :label-width="formLabelWidth">
-              <el-input v-model="form.area" class="input_72"></el-input>
+              <el-cascader
+                expand-trigger="hover"
+                :options="options"
+                v-model="form.area"
+                style="width: 100%">
+              </el-cascader>
             </el-form-item>
             <el-form-item label="爱好" :label-width="formLabelWidth">
               <el-input v-model="form.habit" class="input_72"></el-input>
@@ -91,7 +103,8 @@ export default {
   name: 'perInfo',
   data () {
     // var ip = 'http://192.168.1.122:3000/v1'
-    var ip = 'http://192.168.137.1:3000/v1'
+    // var ip = 'http://192.168.137.1:3000/v1'
+    var ip = 'http://192.168.3.206:3000/v1'
     return {
       changePerInfoUrl: ip + '/user/changeuserinformation',
       getPerInfoUrl: ip + '/user/getuserinfo',
@@ -115,6 +128,7 @@ export default {
         qq: '',
         email: ''
       },
+      options: [],
       pickerOptions: {
         disabledDate (time) {
           return time.getTime() > Date.now() - 8.64e7
@@ -183,6 +197,53 @@ export default {
       this.form.qq = this.person[11].name
       this.form.email = this.person[12].name
       this.dialogFormVisible = true
+      this.getData()
+    },
+    getData () {
+      var vm = this
+      var cityUrl = 'http://restapi.amap.com/v3/config/district?subdistrict=4&key=8365fd9e511e8788feeeac4e70fcb12a'
+      vm.$http.get(cityUrl)
+              .then((response) => {
+                // console.log(response)
+                if (response.body.status) {
+                  var province = response.body.districts[0].districts
+                  province.forEach(function (element) {
+                    var pro = {
+                      value: element.adcode,
+                      label: element.name,
+                      children: []
+                    }
+                    this.push(pro)
+                    var city = element.districts
+                    city.forEach(function (ele) {
+                      var ct = {
+                        value: ele.adcode,
+                        label: ele.name,
+                        children: []
+                      }
+                      this.push(ct)
+                      var county = ele.districts
+                      county.forEach(function (e) {
+                        var cty = {
+                          value: e.adcode,
+                          label: e.name
+                        }
+                        this.push(cty)
+                      }, ct.children)
+                    }, pro.children)
+                  }, this.options)
+                } else {
+                  this.$message({
+                    message: '获取失败',
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: '获取失败',
+                  type: 'error'
+                })
+              })
     },
     submitForm (form) {
       this.$refs[form].validate((valid) => {
@@ -193,8 +254,8 @@ export default {
                          {label: '年龄：', name: this.form.age},
                          {label: '工作：', name: this.form.job},
                          {label: '权限：', name: this.form.level},
-                         {label: '何时进入公司？', name: this.form.joinday},
-                         {label: '来自哪里？：', name: this.form.area},
+                         {label: '何时进入公司:', name: this.form.joinday},
+                         {label: '来自哪里：', name: this.form.area},
                          {label: '爱好：', name: this.form.habit},
                          {label: '电话号：', name: this.form.phone},
                          {label: '微信号：', name: this.form.weixin},
@@ -251,7 +312,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .perInfo{
-  width: 480px;
+  width: 600px;
   margin: 50px auto;
 }
 .clearfix:before,
@@ -263,7 +324,7 @@ export default {
   clear: both
 }
 .box-card {
-  width: 480px;
+  width: 600px;
 }
 .info{
   width: 70%;

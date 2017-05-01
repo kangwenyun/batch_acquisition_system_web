@@ -83,12 +83,12 @@ export default {
                     this.push(data)
                   }, this.levelData)
                 } else {
-                  this.$alert(response.body.msg, '登录失败', {
+                  this.$alert(response.body.msg, '权限信息获取失败', {
                     confirmButtonText: '确定'
                   })
                 }
               }, (response) => {
-                this.$alert(response.body.msg, '登录失败1', {
+                this.$alert(response.body.msg, '权限信息获取失败1', {
                   confirmButtonText: '确定'
                 })
               })
@@ -104,9 +104,9 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           this.changeLevel()
+          this.dialogFormVisible = false
         }
       })
-      this.dialogFormVisible = false
     },
     changeLevel () {
       var vm = this

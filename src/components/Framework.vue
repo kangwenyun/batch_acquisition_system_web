@@ -31,6 +31,7 @@
             <template slot="title">个人信息</template>
                 <el-menu-item index="perinfo">个人信息</el-menu-item>
                 <el-menu-item index="changepasswd">密码修改</el-menu-item>
+                <el-menu-item index="review">新注册用户审核</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -69,6 +70,7 @@
                 <span id="personalInfo_text" :class="{show:showText,hide:hideText}">个人信息</span></template>
               <el-menu-item index="perinfo">个人信息</el-menu-item>
               <el-menu-item index="changepasswd">密码修改</el-menu-item>
+              <el-menu-item index="review">新注册用户审核</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -254,5 +256,8 @@ export default {
     background-color: #69b946 !important;
     color: white !important;
     border-color: #69b946 !important;
+}
+.el-dialog{
+    width: 400px !important;
 }
 </style>

@@ -1,5 +1,11 @@
 <template>
     <div id="login">
+        <div class="headr">
+            <div class="header_txt">
+                <i id="llogo" class="el-icon-setting"></i>
+                <span id="header_txt">批次采集信息系统</span>
+            </div>
+        </div>
         <el-row class="content_wrap">
             <el-col :span="16">
                 <div>
@@ -47,9 +53,9 @@
 export default {
   name: 'login',
   data () {
-    // var ip = 'http://192.168.14.131:3000/v1'
+    var ip = 'http://192.168.3.206:3000/v1'
     // var ip = 'http://192.168.1.122:3000/v1'
-    var ip = 'http://192.168.137.1:3000/v1'
+    // var ip = 'http://192.168.137.1:3000/v1'
     return {
       loginUrl: ip + '/user/login',
       form: {
@@ -86,7 +92,7 @@ export default {
               .then((response) => {
                 if (response.body.success) {
                   sessionStorage.setItem('userId', this.form.user)
-                  window.location.href = '#/proLine'
+                  window.location.href = '#/framework/proLine'
                 } else {
                   this.$alert(response.body.msg, '登录失败', {
                     confirmButtonText: '确定'
@@ -110,10 +116,27 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.headr{
+    z-index: 999;
+    height: 60px;
+    border-bottom: 1px solid #d6dfea;
+    background: #324157;
+    line-height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.header_txt{
+    margin-left: 10px;
+    font-size: 30px;
+    color: white;
+    text-align: -webkit-left;
+}
 .content_wrap{
     max-width: 960px;
     min-width: 372px;
-    margin: 32px auto 0 auto !important;
+    margin: 92px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }

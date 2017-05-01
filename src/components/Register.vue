@@ -1,5 +1,11 @@
 <template>
   <div class="register">
+    <div class="headr">
+        <div class="header_txt">
+            <i id="llogo" class="el-icon-setting"></i>
+            <span id="header_txt">批次采集信息系统</span>
+        </div>
+    </div>
     <el-row class="content_wrap">
       <div class="register_header">注册</div>
       <div class="content">
@@ -45,7 +51,8 @@
                   class="input_72"
                   type="date"
                   placeholder="选择日期"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions"
+                  style="width: 100%">
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="工作" :label-width="formLabelWidth">
@@ -55,10 +62,21 @@
                 <el-input v-model.number="form.level" class="input_72"></el-input>
               </el-form-item>
               <el-form-item label="何时进入公司？" :label-width="formLabelWidth">
-                <el-input v-model="form.joinday" class="input_72"></el-input>
+                <el-date-picker
+                  v-model="form.joinday"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions"
+                  class="input_72">
+                </el-date-picker>
               </el-form-item>
               <el-form-item label="来自哪里？" :label-width="formLabelWidth">
-                <el-input v-model="form.area" class="input_72"></el-input>
+                <el-cascader
+                  expand-trigger="hover"
+                  :options="options"
+                  v-model="form.area"
+                  class="input_72">
+                </el-cascader>
               </el-form-item>
               <el-form-item label="爱好" :label-width="formLabelWidth">
                 <el-input v-model="form.habit" class="input_72"></el-input>
@@ -115,13 +133,14 @@ export default {
         job: '',
         level: '',
         joinday: '',
-        area: '',
+        area: [],
         habit: '',
         phone: '',
         weixin: '',
         qq: '',
         email: ''
       },
+      options: [],
       pickerOptions: {
         disabledDate (time) {
           return time.getTime() > Date.now() - 8.64e7
@@ -144,7 +163,56 @@ export default {
       }
     }
   },
+  created () {
+    this.getData()
+  },
   methods: {
+    getData () {
+      var vm = this
+      var cityUrl = 'http://restapi.amap.com/v3/config/district?subdistrict=4&key=8365fd9e511e8788feeeac4e70fcb12a'
+      vm.$http.get(cityUrl)
+              .then((response) => {
+                // console.log(response)
+                if (response.body.status) {
+                  var province = response.body.districts[0].districts
+                  province.forEach(function (element) {
+                    var pro = {
+                      value: element.adcode,
+                      label: element.name,
+                      children: []
+                    }
+                    this.push(pro)
+                    var city = element.districts
+                    city.forEach(function (ele) {
+                      var ct = {
+                        value: ele.adcode,
+                        label: ele.name,
+                        children: []
+                      }
+                      this.push(ct)
+                      var county = ele.districts
+                      county.forEach(function (e) {
+                        var cty = {
+                          value: e.adcode,
+                          label: e.name
+                        }
+                        this.push(cty)
+                      }, ct.children)
+                    }, pro.children)
+                  }, this.options)
+                } else {
+                  this.$message({
+                    message: '获取失败',
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: '获取失败',
+                  type: 'error'
+                })
+              })
+    },
     submitForm (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
@@ -199,6 +267,23 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .headr{
+    z-index: 999;
+    height: 60px;
+    border-bottom: 1px solid #d6dfea;
+    background: #324157;
+    line-height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.header_txt{
+    margin-left: 10px;
+    font-size: 30px;
+    color: white;
+    text-align: -webkit-left;
+}
 .register_header{
     border-left: 3px solid #59AfE4;
     padding-left: 5px;
@@ -209,7 +294,7 @@ export default {
     width: 800px;
     max-width: 960px;
     min-width: 372px;
-    margin: 32px auto 0 auto !important;
+    margin: 92px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }

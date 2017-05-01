@@ -15,6 +15,7 @@ import ProLine from '@/components/ProLine'
 import ProDataView from '@/components/ProDataView'
 import ProDataMaintain from '@/components/ProDataMaintain'
 import Framework from '@/components/Framework'
+import Review from '@/components/Review'
 
 Vue.use(Router)
 
@@ -104,6 +105,12 @@ export default new Router({
           path: '/framework/changepasswd',
           name: 'ChangePasswd',
           component: ChangePasswd
+          // meta: { requiresId: true }
+        },
+        {
+          path: '/framework/review',
+          name: 'Review',
+          component: Review
           // meta: { requiresId: true }
         }
       ]
