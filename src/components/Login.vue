@@ -22,7 +22,7 @@
                                 <el-input v-model="form.user" placeholder="请输入登录账号" icon="circle-cross" :on-icon-click="clearUserInput"></el-input>
                             </el-form-item>
                             <el-form-item prop="pwd">
-                                <el-input type="password" v-model="form.pwd" placeholder="请输入登录密码" icon="circle-cross" :on-icon-click="clearPwdInput"></el-input>
+                                <el-input type="password" v-model="form.pwd" placeholder="请输入登录密码" icon="circle-cross" :on-icon-click="clearPwdInput" @keyup.enter="login"></el-input>
                             </el-form-item>
                             <el-form-item v-if="form.error" class="error">
                                 账号或密码不对
@@ -50,12 +50,11 @@
 </template>
 
 <script>
+var ipValue = require('../glbl.js')
+var ip = ipValue.ip.value
 export default {
   name: 'login',
   data () {
-    var ip = 'http://192.168.3.206:3000/v1'
-    // var ip = 'http://192.168.1.122:3000/v1'
-    // var ip = 'http://192.168.137.1:3000/v1'
     return {
       loginUrl: ip + '/user/login',
       form: {

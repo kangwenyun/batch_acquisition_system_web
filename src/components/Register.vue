@@ -104,8 +104,8 @@
   </div>
 </template>
 <script>
-// var ip = 'http://192.168.1.122:3000/v1'
-var ip = 'http://192.168.137.1:3000/v1'
+var ipValue = require('../glbl.js')
+var ip = ipValue.ip.value
 export default {
   name: 'register',
   data () {

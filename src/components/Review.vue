@@ -8,11 +8,13 @@
         <el-table-column
             fixed
             prop="id"
-            label="账号">
+            label="账号"
+            :width="columuWidth">
         </el-table-column>
         <el-table-column
             prop="nickname"
-            label="昵称">
+            label="昵称"
+            :width="columuWidth">
         </el-table-column>
         <el-table-column
             prop="sex"
@@ -93,18 +95,21 @@
 </template>
 
 <script>
+var ipValue = require('../glbl.js')
+var ip = ipValue.ip.value
 export default {
   name: 'review',
   data () {
-    // var ip = 'http://192.168.1.122:3000/v1'
-    var ip = 'http://192.168.137.1:3000/v1'
     return {
-      getPerInfoUrl: ip + '/user/getuserinfo',
+      checkuserlistUrl: ip + '/user/checkuserlist',
+      addLevelUrl: ip + '/user/checkuser',
+      checkusertouserUrl: ip + '/user/checkusertouser',
       registerPersonList: [],
       dialogFormVisible: false,
       formLabelWidth: '70px',
       columuWidth: '126px',
       id: sessionStorage.getItem('userId'),
+      changeuserid: '',
       nickname: '',
       sex: '',
       birthday: '',
@@ -134,29 +139,28 @@ export default {
   methods: {
     load () {
       var vm = this
-      // var data = []
-      vm.$http.post(this.getPerInfoUrl, {'userid': vm.id})
+      vm.$http.post(this.checkuserlistUrl, {'userid': vm.id})
               .then((response) => {
                 if (response.body.success) {
-                  var data = {
-                    id: response.body.userid,
-                    nickname: response.body.username,
-                    sex: response.body.sex,
-                    birthday: response.body.birthday,
-                    job: response.body.job,
-                    level: response.body.level,
-                    joinday: response.body.joinday,
-                    area: response.body.area,
-                    habit: response.body.habit,
-                    phone: response.body.phone,
-                    weixin: response.body.weixin,
-                    qq: response.body.qq,
-                    email: response.body.email
-                  }
-                  this.registerPersonList.push(data)
-                  // data.forEach(function (element) {
-                  //   this.push(element)
-                  // }, this.registerPersonList)
+                  var list = response.body.personlist
+                  list.forEach(function (element) {
+                    var data = {
+                      id: element.userid,
+                      nickname: element.username,
+                      sex: element.sex,
+                      birthday: element.birthday,
+                      job: element.job,
+                      level: element.level,
+                      joinday: element.joinday,
+                      area: element.area,
+                      habit: element.habit,
+                      phone: element.phone,
+                      weixin: element.weixin,
+                      qq: element.qq,
+                      email: element.email
+                    }
+                    this.push(data)
+                  }, this.registerPersonList)
                 } else {
                   this.$alert(response.body.msg, '新注册信息获取失败', {
                     confirmButtonText: '确定'
@@ -168,15 +172,51 @@ export default {
                 })
               })
     },
+    checkpermission () {
+      var vm = this
+      vm.$http.post(this.checkusertouserUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid})
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'success'
+                })
+              })
+    },
     addLevel (index, row) {
-    //   console.log(index)
-    //   console.log('------------')
-    //   console.log(row)
       this.dialogFormVisible = true
-      // this.form.oldLevel = row.level
     },
     pass (index, row) {
       // var level = row.userId
+      var vm = this
+      vm.$http.post(this.checkusertouserUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid})
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$alert(response.body.msg, '通过失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '通过失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     },
     notPass (index, row) {
     // var level = row.userId
@@ -184,27 +224,27 @@ export default {
     submitForm (addForm) {
       this.$refs[addForm].validate((valid) => {
         if (valid) {
-          this.changeLevel()
+          this.checkuser()
           this.dialogFormVisible = false
         }
       })
     },
-    changeLevel () {
+    checkuser () {
       var vm = this
-      vm.$http.post(this.changeLevelUrl, {'userid': vm.id, 'newlevel': vm.level})
+      vm.$http.post(this.addLevelUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid, 'level': vm.level})
               .then((response) => {
-                if (response.success) {
+                if (response.body.success) {
                   this.$message({
-                    message: response.msg,
+                    message: response.body.msg,
                     type: 'success'
                   })
                 } else {
-                  this.$alert(response.msg, '权限修改失败', {
+                  this.$alert(response.body.msg, '权限修改失败', {
                     confirmButtonText: '确定'
                   })
                 }
               }, (response) => {
-                this.$alert(response.msg, '权限修改失败', {
+                this.$alert(response.body.msg, '权限修改失败', {
                   confirmButtonText: '确定'
                 })
               })

@@ -26,11 +26,11 @@
 </template>
 
 <script>
+var ipValue = require('../glbl.js')
+var ip = ipValue.ip.value
 export default {
   name: 'changepasswd',
   data () {
-    // var ip = 'http://192.168.1.122:3000/v1'
-    var ip = 'http://192.168.137.1:3000/v1'
     var pwdAgainVali = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入新密码'))

@@ -31,9 +31,12 @@
             <template slot="title">个人信息</template>
                 <el-menu-item index="perinfo">个人信息</el-menu-item>
                 <el-menu-item index="changepasswd">密码修改</el-menu-item>
-                <el-menu-item index="review">新注册用户审核</el-menu-item>
+                <el-menu-item index="review" v-if="reviewPage">新注册用户审核</el-menu-item>
           </el-submenu>
         </el-menu>
+      </div>
+      <div class="logout">
+          <img src="../assets/logout.png" alt="" class="logout" @click="logout">
       </div>
     </div>
     <div class="content_wrap">
@@ -70,7 +73,7 @@
                 <span id="personalInfo_text" :class="{show:showText,hide:hideText}">个人信息</span></template>
               <el-menu-item index="perinfo">个人信息</el-menu-item>
               <el-menu-item index="changepasswd">密码修改</el-menu-item>
-              <el-menu-item index="review">新注册用户审核</el-menu-item>
+              <el-menu-item index="review" v-if="reviewPage">新注册用户审核</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -97,19 +100,48 @@
 
 
 <script>
+var ipValue = require('../glbl.js')
+var ip = ipValue.ip.value
 export default {
   name: 'app',
   data () {
     return {
+      checkpermissionUrl: ip + '/user/checkpermission',
+      id: sessionStorage.getItem('userId'),
       activeIndex: 'proline',
       showText: false,
       hideText: true,
       noData: false,
       newData: true,
+      reviewPage: false,
       dialogVisible: false
     }
   },
+  created () {
+    var io = require('socket.io-client')
+    var socket = io.connect('http://192.168.1.122:3000')
+    socket.on('connect', function () {
+      socket.on('msg', function (data) {
+        console.log(data)
+      })
+      socket.emit('newmessage', { my: 'data' })
+    })
+    this.checkpermission()
+  },
   methods: {
+    checkpermission () {
+      var vm = this
+      vm.$http.post(this.checkpermissionUrl, {'userid': vm.id})
+              .then((response) => {
+                if (response.body.success) {
+                  this.reviewPage = true
+                } else {
+                  this.reviewPage = false
+                }
+              }, (response) => {
+                this.reviewPage = false
+              })
+    },
     handleClick () {
     //   console.log('1')
     },
@@ -123,6 +155,10 @@ export default {
     },
     newMessage () {
       this.dialogVisible = true
+    },
+    logout () {
+      sessionStorage.clear()
+      window.location.href = '#/'
     }
   }
 }
@@ -142,16 +178,23 @@ export default {
     width: 100%;
 }
 .navMenu{
-    width: 590px;
+    width: 530px;
     position: fixed;
     top: 0;
-    right: 0;
+    right: 30px;
 }
 .header_text{
     margin-left: 10px;
     font-size: 30px;
     color: white;
     text-align: -webkit-left;
+}
+.logout{
+    width: 30px;
+    height: 30px;
+    position: fixed;
+    top: 15px;
+    right: 15px;
 }
 .nav{
     display: none;

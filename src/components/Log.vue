@@ -34,6 +34,8 @@
 </template>
 
 <script>
+// var ipValue = require('../glbl.js')
+// var ip = ipValue.ip.value
 export default {
   name: 'log',
   data () {
