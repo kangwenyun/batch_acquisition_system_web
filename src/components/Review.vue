@@ -7,7 +7,7 @@
         empty-text="暂时还没有新注册的账户">
         <el-table-column
             fixed
-            prop="id"
+            prop="changeuserid"
             label="账号"
             :width="columuWidth">
         </el-table-column>
@@ -82,6 +82,9 @@
     </el-table>
     <el-dialog title="权限添加" v-model="dialogFormVisible">
         <el-form ref="addForm" :model="addForm" :rules="rules">
+            <el-form-item label="登录账号" :label-width="formLabelWidth" prop = "changeuserid">
+                <el-input v-model.number="addForm.changeuserid" disabled> </el-input>
+            </el-form-item>
             <el-form-item label="权限" :label-width="formLabelWidth" prop = "level">
                 <el-input v-model.number="addForm.level"> </el-input>
             </el-form-item>
@@ -104,6 +107,7 @@ export default {
       checkuserlistUrl: ip + '/user/checkuserlist',
       addLevelUrl: ip + '/user/checkuser',
       checkusertouserUrl: ip + '/user/checkusertouser',
+      refusecheckUrl: ip + '/user/refusecheck',
       registerPersonList: [],
       dialogFormVisible: false,
       formLabelWidth: '70px',
@@ -123,6 +127,7 @@ export default {
       qq: '',
       email: '',
       addForm: {
+        changeuserid: '',
         level: ''
       },
       rules: {
@@ -138,6 +143,7 @@ export default {
   },
   methods: {
     load () {
+      this.registerPersonList = []
       var vm = this
       vm.$http.post(this.checkuserlistUrl, {'userid': vm.id})
               .then((response) => {
@@ -145,7 +151,7 @@ export default {
                   var list = response.body.personlist
                   list.forEach(function (element) {
                     var data = {
-                      id: element.userid,
+                      changeuserid: element.userid,
                       nickname: element.username,
                       sex: element.sex,
                       birthday: element.birthday,
@@ -195,12 +201,15 @@ export default {
               })
     },
     addLevel (index, row) {
+      // console.log(row)
+      this.addForm.changeuserid = row.changeuserid
       this.dialogFormVisible = true
     },
     pass (index, row) {
       // var level = row.userId
+      // console.log(row)
       var vm = this
-      vm.$http.post(this.checkusertouserUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid})
+      vm.$http.post(this.checkusertouserUrl, {'userid': vm.id, 'changeuserid': row.changeuserid})
               .then((response) => {
                 if (response.body.success) {
                   this.$message({
@@ -213,13 +222,31 @@ export default {
                   })
                 }
               }, (response) => {
-                this.$alert(response.body.msg, '通过失败', {
+                this.$alert(response.body.msg, '通过失败1', {
                   confirmButtonText: '确定'
                 })
               })
     },
     notPass (index, row) {
     // var level = row.userId
+      var vm = this
+      vm.$http.post(this.refusecheckUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid, 'email': vm.email})
+              .then((response) => {
+                if (response.body.success) {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                } else {
+                  this.$alert(response.body.msg, '未通过失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '未通过失败', {
+                  confirmButtonText: '确定'
+                })
+              })
     },
     submitForm (addForm) {
       this.$refs[addForm].validate((valid) => {
@@ -231,13 +258,14 @@ export default {
     },
     checkuser () {
       var vm = this
-      vm.$http.post(this.addLevelUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid, 'level': vm.level})
+      vm.$http.post(this.addLevelUrl, {'userid': vm.id, 'changeuserid': this.addForm.changeuserid, 'level': this.addForm.level})
               .then((response) => {
                 if (response.body.success) {
                   this.$message({
                     message: response.body.msg,
                     type: 'success'
                   })
+                  this.load()
                 } else {
                   this.$alert(response.body.msg, '权限修改失败', {
                     confirmButtonText: '确定'

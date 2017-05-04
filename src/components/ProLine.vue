@@ -187,6 +187,10 @@ export default {
                 })
               })
           }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消提交'
+            })
           })
           break
         case 2:

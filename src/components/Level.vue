@@ -26,6 +26,9 @@
     </el-table>
     <el-dialog title="权限修改" v-model="dialogFormVisible">
         <el-form ref="form" :model="form" :rules="rules">
+            <el-form-item label="账号" :label-width="formLabelWidth">
+                <el-input v-model="form.changeId" disabled></el-input>
+            </el-form-item>
             <el-form-item label="原权限" :label-width="formLabelWidth">
                 <el-input v-model="form.oldLevel" disabled></el-input>
             </el-form-item>
@@ -48,11 +51,13 @@ export default {
   name: 'level',
   data () {
     return {
-      changeLevelUrl: ip + '/user/getpersonlist',
+      getpersonlistUrl: ip + '/user/getpersonlist',
+      changepermissionUrl: ip + '/user/changepermission',
       levelData: [],
       dialogFormVisible: false,
       formLabelWidth: '70px',
       form: {
+        changeId: '',
         oldLevel: '',
         newLevel: ''
       },
@@ -70,7 +75,7 @@ export default {
   methods: {
     load () {
       var vm = this
-      vm.$http.post(this.changeLevelUrl, {'userid': sessionStorage.getItem('userId')})
+      vm.$http.post(this.getpersonlistUrl, {'userid': sessionStorage.getItem('userId')})
               .then((response) => {
                 if (response.body.success) {
                   var list = response.body.personlist
@@ -96,8 +101,9 @@ export default {
     edit (index, row) {
     //   console.log(index)
     //   console.log('------------')
-    //   console.log(row)
+      // console.log(row)
       this.dialogFormVisible = true
+      this.form.changeId = row.id
       this.form.oldLevel = row.level
     },
     submitForm (form) {
@@ -110,20 +116,20 @@ export default {
     },
     changeLevel () {
       var vm = this
-      vm.$http.post(this.changeLevelUrl, {'userid': vm.form.user, 'newlevel': vm.form.newLevel})
+      vm.$http.post(this.changepermissionUrl, {'userid': sessionStorage.getItem('userId'), 'changeuserid': vm.form.changeId, 'level': vm.form.newLevel})
               .then((response) => {
-                if (response.success) {
+                if (response.body.success) {
                   this.$message({
-                    message: response.msg,
+                    message: response.body.msg,
                     type: 'success'
                   })
                 } else {
-                  this.$alert(response.msg, '权限修改失败', {
+                  this.$alert(response.body.msg, '权限修改失败', {
                     confirmButtonText: '确定'
                   })
                 }
               }, (response) => {
-                this.$alert(response.msg, '权限修改失败', {
+                this.$alert(response.body.msg, '权限修改失败1', {
                   confirmButtonText: '确定'
                 })
               })

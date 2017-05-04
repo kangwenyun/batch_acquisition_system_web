@@ -11,16 +11,6 @@
         <el-button :class="{show: delete2_icon, hide: undelete2_icon}" @click="deleteAllData">删除所有</el-button>
         <i class="el-icon-document icon_pos" v-on:mouseenter="document"></i>
         <el-button :class="{show: document_icon, hide: undocument_icon}" @click="addAllData">加载全部货物信息</el-button>
-        <i class="el-icon-date icon_pos" v-on:mouseenter="date"></i>
-        <el-date-picker
-            :class="{show: date_icon, hide: undate_icon}"
-            v-model="date"
-            type="date"
-            placeholder="想要查看哪天的数据？"
-            :picker-options="pickerOptions"
-            format="yyyy-MM-dd"
-            @change="dateChange">
-        </el-date-picker>
         <i class="el-icon-search icon_pos" v-if="showImg" @click="showInput"></i>
         <div class="find_right">
             <transition name="find">
@@ -140,17 +130,14 @@
             <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
                 <el-input v-model="plusForm.proId"> </el-input>
             </el-form-item>
-            <el-form-item label="批次序号" :label-width="formLabelWidth" prop = "number">
-                <el-input v-model="plusForm.number"> </el-input>
-            </el-form-item>
             <el-form-item label="货物类型（长）" :label-width="formLabelWidth" prop = "type_length">
-                <el-input v-model="editForm.type_length"></el-input>
+                <el-input v-model="plusForm.type_length"></el-input>
             </el-form-item>
             <el-form-item label="货物类型（宽）" :label-width="formLabelWidth" prop = "type_width">
-                <el-input v-model="editForm.type_width"></el-input>
+                <el-input v-model="plusForm.type_width"></el-input>
             </el-form-item>
             <el-form-item label="货物类型（高）" :label-width="formLabelWidth" prop = "type_high">
-                <el-input v-model="editForm.type_high"></el-input>
+                <el-input v-model="plusForm.type_high"></el-input>
             </el-form-item>
             <el-form-item label="录入时间" :label-width="formLabelWidth">
                 <el-date-picker
@@ -184,6 +171,9 @@ export default {
     return {
       getproductlistUrl: ip + '/product/getproductlist',
       changeproductUrl: ip + '/product/changeproduct',
+      addDataUrl: ip + '/product/QaddDataWhileRefreshBatch2',
+      deleteDataUrl: ip + '/product/QdeleteDataWhileRefreshBatch',
+      deleteAllDataUrl: ip + '/product/deleteallproduct',
       edit_icon: true,
       unedit_icon: false,
       plus_icon: false,
@@ -194,13 +184,6 @@ export default {
       undelete2_icon: true,
       document_icon: false,
       undocument_icon: true,
-      date_icon: false,
-      undate_icon: true,
-      pickerOptions: {
-        disabledDate (time) {
-          return time.getTime() > Date.now() - 8.64e7
-        }
-      },
       showImg: true,
       show: false,
       search: '',
@@ -211,6 +194,11 @@ export default {
       current: -1, // 表示未选中任何行
       current_row: [],
       formLabelWidth: '100px',
+      pickerOptions: {
+        disabledDate (time) {
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
       editDialogFormVisible: false,
       plusDialogFormVisible: false,
       editForm: {
@@ -228,7 +216,6 @@ export default {
         batchId: '',
         trayId: '',
         proId: '',
-        number: '',
         type_length: '',
         type_width: '',
         type_high: '',
@@ -374,20 +361,6 @@ export default {
       this.date_icon = false
       this.undate_icon = true
     },
-    date (e) {
-      this.date_icon = !this.date_icon
-      this.undate_icon = !this.date_icon
-      this.plus_icon = false
-      this.unplus_icon = true
-      this.edit_icon = false
-      this.unedit_icon = true
-      this.delete1_icon = false
-      this.undelete1_icon = true
-      this.delete2_icon = false
-      this.undelete2_icon = true
-      this.document_icon = false
-      this.undocument_icon = true
-    },
     showInput () {
       this.showImg = false
       this.show = true
@@ -468,26 +441,6 @@ export default {
         this.editForm.type_high = this.current_row.type_high
         this.editForm.time = this.current_row.time
         this.editForm.flag = this.current_row.flag
-        var vm = this
-        vm.$http.post(this.changeproductUrl, {'productid': this.editForm.proId, 'batchid': this.editForm.batchId, 'number': this.editForm.number, 'type_length': this.editForm.type_length, 'type_high': this.editForm.type_high, 'type_width': this.editForm.type_width, 'tray': this.editForm.trayId, 'time': this.editForm.time, 'flag': this.editForm.flag})
-                .then((response) => {
-                  if (response.body.success) {
-                    this.$message({
-                      message: response.body.msg,
-                      type: 'success'
-                    })
-                  } else {
-                    this.$message({
-                      message: response.body.msg,
-                      type: 'error'
-                    })
-                  }
-                }, (response) => {
-                  this.$message({
-                    message: response.body.msg,
-                    type: 'error'
-                  })
-                })
       }
     },
     addData () {
@@ -501,8 +454,24 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.proData.splice(this.current, 1)
-          this.saveData = this.proData
+          var vm = this
+          vm.$http.post(this.deleteDataUrl, {'productid': this.editForm.proId, 'batchid': this.editForm.batchId})
+                  .then((response) => {
+                    if (response.body.success) {
+                      this.proData.splice(this.current, 1)
+                      this.saveData = this.proData
+                    } else {
+                      this.$message({
+                        message: response.body.msg,
+                        type: 'error'
+                      })
+                    }
+                  }, (response) => {
+                    this.$message({
+                      message: response.body.msg,
+                      type: 'error'
+                    })
+                  })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -512,13 +481,29 @@ export default {
       }
     },
     deleteAllData () {
-      this.$confirm('确定要删除该条数据吗?', '提示', {
+      this.$confirm('确定要删除所有数据吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.proData = null
-        this.saveData = null
+        var vm = this
+        vm.$http.post(this.deleteAllDataUrl, {'userid': sessionStorage.getItem('userId')})
+                .then((response) => {
+                  if (response.body.success) {
+                    this.proData = null
+                    this.saveData = null
+                  } else {
+                    this.$message({
+                      message: response.body.msg,
+                      type: 'error'
+                    })
+                  }
+                }, (response) => {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -529,27 +514,40 @@ export default {
     addAllData () {
       this.proData = this.saveData
     },
-    dateChange () {
-      //
-    },
     editSubmitForm (editForm) {
       this.$refs[editForm].validate((valid) => {
         if (valid) {
-          var editValue = {
-            id: this.editForm.id,
-            batchId: this.editForm.batchId,
-            trayId: this.editForm.trayId,
-            proId: this.editForm.proId,
-            number: this.editForm.number,
-            type_length: this.editForm.type_length,
-            type_width: this.editForm.type_width,
-            type_high: this.editForm.type_high,
-            time: this.editForm.time,
-            flag: this.editForm.flag
-          }
-          this.proData.splice(this.current, 1, editValue)
-          this.saveData = this.proData
-          this.editDialogFormVisible = false
+          var vm = this
+          vm.$http.post(this.changeproductUrl, {'productid': this.editForm.proId, 'batchid': this.editForm.batchId, 'number': this.editForm.number, 'type_length': this.editForm.type_length, 'type_high': this.editForm.type_high, 'type_width': this.editForm.type_width, 'tray': this.editForm.trayId, 'time': this.editForm.time, 'flag': this.editForm.flag})
+                  .then((response) => {
+                    if (response.body.success) {
+                      var editValue = {
+                        id: this.editForm.id,
+                        batchId: this.editForm.batchId,
+                        trayId: this.editForm.trayId,
+                        proId: this.editForm.proId,
+                        number: this.editForm.number,
+                        type_length: this.editForm.type_length,
+                        type_width: this.editForm.type_width,
+                        type_high: this.editForm.type_high,
+                        time: this.editForm.time,
+                        flag: this.editForm.flag
+                      }
+                      this.proData.splice(this.current, 1, editValue)
+                      this.saveData = this.proData
+                      this.editDialogFormVisible = false
+                    } else {
+                      this.$message({
+                        message: response.body.msg,
+                        type: 'error'
+                      })
+                    }
+                  }, (response) => {
+                    this.$message({
+                      message: response.body.msg,
+                      type: 'error'
+                    })
+                  })
         }
       })
     },
@@ -557,21 +555,37 @@ export default {
       this.$refs[plusForm].validate((valid) => {
         if (valid) {
           var plusTime = new Date(this.plusForm.time)
-          var plusValue = {
-            id: this.plusForm.id,
-            batchId: this.plusForm.batchId,
-            trayId: this.plusForm.trayId,
-            proId: this.plusForm.proId,
-            number: this.plusForm.number,
-            type_length: this.editForm.type_length,
-            type_width: this.editForm.type_width,
-            type_high: this.editForm.type_high,
-            time: plusTime.getFullYear() + '-' + plusTime.getMonth() + '-' + plusTime.getDate() + ' ' + plusTime.getHours() + ':' + plusTime.getMinutes() + ':' + plusTime.getSeconds(),
-            flag: this.plusForm.flag
-          }
-          this.proData.push(plusValue)
-          this.saveData = this.proData
-          this.plusDialogFormVisible = false
+          var vm = this
+          vm.$http.post(this.changeproductUrl, {'productid': this.plusForm.proId, 'batchid': this.plusForm.batchId, 'type_length': this.plusForm.type_length, 'type_high': this.plusForm.type_high, 'type_width': this.plusForm.type_width, 'tray': this.plusForm.trayId, 'time': this.plusForm.time, 'flag': this.plusForm.flag})
+                  .then((response) => {
+                    if (response.body.success) {
+                      var plusValue = {
+                        id: this.plusForm.id,
+                        batchId: this.plusForm.batchId,
+                        trayId: this.plusForm.trayId,
+                        proId: this.plusForm.proId,
+                        number: this.plusForm.number,
+                        type_length: this.editForm.type_length,
+                        type_width: this.editForm.type_width,
+                        type_high: this.editForm.type_high,
+                        time: plusTime.getFullYear() + '-' + plusTime.getMonth() + '-' + plusTime.getDate() + ' ' + plusTime.getHours() + ':' + plusTime.getMinutes() + ':' + plusTime.getSeconds(),
+                        flag: this.plusForm.flag
+                      }
+                      this.proData.push(plusValue)
+                      this.saveData = this.proData
+                      this.plusDialogFormVisible = false
+                    } else {
+                      this.$message({
+                        message: response.body.msg,
+                        type: 'error'
+                      })
+                    }
+                  }, (response) => {
+                    this.$message({
+                      message: response.body.msg,
+                      type: 'error'
+                    })
+                  })
         }
       })
     }

@@ -58,9 +58,6 @@
               <el-form-item label="工作" :label-width="formLabelWidth">
                 <el-input v-model="form.job" class="input_72"></el-input>
               </el-form-item>
-              <el-form-item label="权限级别" prop="level" :label-width="formLabelWidth">
-                <el-input v-model.number="form.level" class="input_72"></el-input>
-              </el-form-item>
               <el-form-item label="何时进入公司？" :label-width="formLabelWidth">
                 <el-date-picker
                   v-model="form.joinday"
@@ -131,7 +128,6 @@ export default {
         sex: '1',
         birthday: '1977-01-01',
         job: '',
-        level: '',
         joinday: '',
         area: [],
         habit: '',
@@ -155,10 +151,6 @@ export default {
         ],
         pwdAgain: [
             {required: true, validator: pwdAgainVali, trigger: 'blur'}
-        ],
-        level: [
-            {required: true, message: '请输入权限级别'},
-            {type: 'number', message: '年龄必须为数字值'}
         ]
       }
     }
@@ -222,7 +214,7 @@ export default {
     },
     regist () {
       var vm = this
-      vm.$http.post(this.registUrl, { 'userid': vm.form.user, 'passwd': vm.form.pwd, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'level': vm.form.level, 'photo': vm.form.path, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email })
+      vm.$http.post(this.registUrl, { 'userid': vm.form.user, 'passwd': vm.form.pwd, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'photo': vm.form.path, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email })
               .then((response) => {
                 if (response.body.success) {
                   this.$message({

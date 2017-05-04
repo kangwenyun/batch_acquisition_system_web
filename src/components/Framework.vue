@@ -78,14 +78,17 @@
         </el-menu>
       </div>
         <div class="detailData">
-          <el-badge value="new" class="item" 
-            :class="{show:newData,hide:noData}">
+          <el-badge value="new" class="item" :hidden="newData">
             <el-button size="small" icon="star-off" @click="newMessage">您有新消息</el-button>
           </el-badge>
           <el-dialog title="新数据" v-model="dialogVisible">
-            <span>这是一段信息</span>
+            <el-input
+                type="textarea"
+                :autosize="{ minRows: 1, maxRows: 15}"
+                placeholder="没有新数据"
+                v-model="newDataCome">
+            </el-input>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
           </span>
           </el-dialog>
@@ -102,6 +105,8 @@
 <script>
 var ipValue = require('../glbl.js')
 var ip = ipValue.ip.value
+// var io = require('socket.io-client')
+// var socket = io.connect(ipValue.socketip.value)
 export default {
   name: 'app',
   data () {
@@ -111,21 +116,21 @@ export default {
       activeIndex: 'proline',
       showText: false,
       hideText: true,
-      noData: false,
-      newData: true,
+      newData: false,
+      newDataCome: '',
       reviewPage: false,
       dialogVisible: false
     }
   },
+  sockets: {
+    connect: function () {
+      console.log('socket connected')
+    },
+    message: function (val) {
+      this.newDataCome = val
+    }
+  },
   created () {
-    var io = require('socket.io-client')
-    var socket = io.connect('http://192.168.1.122:3000')
-    socket.on('connect', function () {
-      socket.on('msg', function (data) {
-        console.log(data)
-      })
-      socket.emit('newmessage', { my: 'data' })
-    })
     this.checkpermission()
   },
   methods: {
@@ -155,10 +160,13 @@ export default {
     },
     newMessage () {
       this.dialogVisible = true
+      this.newData = !this.newData
     },
     logout () {
       sessionStorage.clear()
       window.location.href = '#/'
+      this.$socket.emit('newmessage', { my: 'close' })
+      this.$socket.close()
     }
   }
 }

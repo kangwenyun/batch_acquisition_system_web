@@ -22,7 +22,7 @@
                                 <el-input v-model="form.user" placeholder="请输入登录账号" icon="circle-cross" :on-icon-click="clearUserInput"></el-input>
                             </el-form-item>
                             <el-form-item prop="pwd">
-                                <el-input type="password" v-model="form.pwd" placeholder="请输入登录密码" icon="circle-cross" :on-icon-click="clearPwdInput" @keyup.enter="login"></el-input>
+                                <el-input type="password" v-model="form.pwd" placeholder="请输入登录密码" icon="circle-cross" :on-icon-click="clearPwdInput" @keyup.enter.native="submitForm('form')"></el-input>
                             </el-form-item>
                             <el-form-item v-if="form.error" class="error">
                                 账号或密码不对
@@ -39,7 +39,7 @@
                         </el-form>
                     </div>
                     <div class="login_bottom">
-                        <a href="#" class="bottom">忘记密码?</a>
+                        <a href="#/forgetpasswd" class="bottom">忘记密码?</a>
                         <span class="dividing_line"></span>
                         <a href="#/register" class="bottom">注册新账号</a>
                     </div>

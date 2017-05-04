@@ -6,6 +6,7 @@
             v-model="date"
             type="date"
             placeholder="选择日期"
+            format="yyyy-MM-dd"
             :picker-options="pickerOptions"
             class="log_date"
             @change="dateChange">
@@ -34,45 +35,63 @@
 </template>
 
 <script>
-// var ipValue = require('../glbl.js')
-// var ip = ipValue.ip.value
+var ipValue = require('../glbl.js')
+var ip = ipValue.ip.value
 export default {
   name: 'log',
   data () {
     return {
+      logUrl: ip + '/user/log',
       date: '',
       pickerOptions: {
         disabledDate (time) {
-          return time.getTime() < Date.now() - 8.64e7
+          return time.getTime() > Date.now()
         }
       },
       logData: []
     }
   },
   created () {
-    this.load()
+    var d = new Date()
+    var month = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1
+    var dd = d.getDate() < 10 ? '0' + d.getDate() : d.getDate()
+    var date = d.getFullYear() + '-' + month + '-' + dd
+    this.load(date)
   },
   methods: {
-    load () {
-      var data = [{
-        time: '2017-04-14 10:01:19',
-        id: 'admin',
-        operate: '账号已经存在'
-      }, {
-        time: '2017-04-14 10:01:20',
-        id: 'user',
-        operate: '批次号已经存在无法添加'
-      }, {
-        time: '2017-04-14 10:01:20',
-        id: 'admin',
-        operate: '添加新货物'
-      }]
-      data.forEach(function (element) {
-        this.push(element)
-      }, this.logData)
+    load (date) {
+      this.logData = []
+      var vm = this
+      vm.$http.post(this.logUrl, {'date': '-' + date})
+              .then((response) => {
+                if (response.body.success) {
+                  var logData = response.body.log
+                  logData.forEach(function (element) {
+                    if (element) {
+                      var data = element.split('|')
+                      var dataLog = {
+                        time: data[0].slice(1, 20),
+                        id: data[1],
+                        operate: data[2]
+                      }
+                      this.push(dataLog)
+                    }
+                  }, this.logData)
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
     },
-    dateChange (e) {
-      console.log(e)
+    dateChange (date) {
+      this.load(date)
     }
   }
 }
