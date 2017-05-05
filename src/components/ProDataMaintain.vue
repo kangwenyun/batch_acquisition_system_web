@@ -620,10 +620,10 @@ export default {
 }
 .find-enter-active
 {
-animation: myfind-in 3s;
--moz-animation: myfind-in 3s;	/* Firefox */
--webkit-animation: myfind-in 3s;	/* Safari 和 Chrome */
--o-animation: myfind-in 3s;	/* Opera */
+animation: myfind-in 1s;
+-moz-animation: myfind-in 1s;	/* Firefox */
+-webkit-animation: myfind-in 1s;	/* Safari 和 Chrome */
+-o-animation: myfind-in 1s;	/* Opera */
 }
 .find-leave-active
 {

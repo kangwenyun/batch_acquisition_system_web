@@ -84,6 +84,10 @@ export default {
   },
   methods: {
     load () {
+      this.batchData[0].children = []
+      this.batchData[1].children = []
+      this.batchData[2].children = []
+      this.batchData[3].children = []
       var vm = this
       vm.$http.get(this.getAllBatchUrl)
               .then((response) => {
@@ -174,6 +178,7 @@ export default {
                     }
                   }
                   this.batchData[1].children.push({id: data.id, label: data.label})
+                  this.load()
                 } else {
                   this.$message({
                     message: response.body.msg,
@@ -208,6 +213,7 @@ export default {
                     }
                   }
                   this.batchData[2].children.push({id: data.id, label: data.label})
+                  this.load()
                 } else {
                   this.$message({
                     message: response.body.msg,

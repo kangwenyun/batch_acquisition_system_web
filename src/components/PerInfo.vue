@@ -9,7 +9,7 @@
         <el-row>
           <el-col :span="10">
             <el-upload
-              action="http://192.168.1.122:3000/v1/user/photo"
+              action="/v1/user/photo"
               name="photo"
               :show-file-list="false"
               :multiple="false"
@@ -57,7 +57,7 @@
             <el-form-item label="权限：" :label-width="formLabelWidth" prop = "job">
                 <el-input v-model="form.level" disabled></el-input>
             </el-form-item>
-            <el-form-item label="何时进入公司？" :label-width="formLabelWidth">
+            <el-form-item label="何时进入公司" :label-width="formLabelWidth">
               <el-date-picker
                 v-model="form.joinday"
                 type="date"
@@ -66,7 +66,7 @@
                 style="width: 100%">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="来自哪里？" :label-width="formLabelWidth">
+            <el-form-item label="来自哪里" :label-width="formLabelWidth">
               <el-cascader
                 expand-trigger="hover"
                 :options="options"
@@ -160,8 +160,8 @@ export default {
                           {label: '生日：', name: response.body.birthday},
                           {label: '工作：', name: response.body.job},
                           {label: '权限：', name: response.body.level},
-                          {label: '何时进入公司？', name: response.body.joinday},
-                          {label: '来自哪里？：', name: response.body.area},
+                          {label: '何时进入公司:', name: response.body.joinday},
+                          {label: '来自哪里：', name: response.body.area},
                           {label: '爱好：', name: response.body.habit},
                           {label: '电话号：', name: response.body.phone},
                           {label: '微信号：', name: response.body.weixin},
@@ -267,7 +267,7 @@ export default {
     },
     handleAvatarSuccess (res, file) {
       this.path = res.path
-      this.photo = 'http://192.168.1.122:3000' + res.path
+      this.photo = res.path
     },
     handleAvatarError (res, file) {
       this.$message.error('上传失败TT')

@@ -78,7 +78,7 @@
         </el-menu>
       </div>
         <div class="detailData">
-          <el-badge value="new" class="item" :hidden="newData">
+          <el-badge value="new" class="item" :hidden="noData">
             <el-button size="small" icon="star-off" @click="newMessage">您有新消息</el-button>
           </el-badge>
           <el-dialog title="新数据" v-model="dialogVisible">
@@ -103,10 +103,12 @@
 
 
 <script>
+// import Vue from 'vue'
+// import VueSocketio from 'vue-socket.io'
+// import socketio from 'socket.io-client'
 var ipValue = require('../glbl.js')
 var ip = ipValue.ip.value
-// var io = require('socket.io-client')
-// var socket = io.connect(ipValue.socketip.value)
+// Vue.use(VueSocketio, socketio(ipValue.socketip.value))
 export default {
   name: 'app',
   data () {
@@ -116,7 +118,7 @@ export default {
       activeIndex: 'proline',
       showText: false,
       hideText: true,
-      newData: false,
+      noData: true,
       newDataCome: '',
       reviewPage: false,
       dialogVisible: false
@@ -127,6 +129,7 @@ export default {
       console.log('socket connected')
     },
     message: function (val) {
+      this.noData = false
       this.newDataCome = val
     }
   },
@@ -160,12 +163,12 @@ export default {
     },
     newMessage () {
       this.dialogVisible = true
-      this.newData = !this.newData
+      this.noData = true
     },
     logout () {
       sessionStorage.clear()
       window.location.href = '#/'
-      this.$socket.emit('newmessage', { my: 'close' })
+    //   this.$socket.emit('newmessage', { my: 'close' })
       this.$socket.close()
     }
   }

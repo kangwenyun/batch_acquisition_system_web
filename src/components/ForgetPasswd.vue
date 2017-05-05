@@ -7,7 +7,7 @@
         </div>
     </div>
     <el-row class="content_wrap">
-      <div class="register_header">找回密码</div>
+      <div class="findpwd_header">找回密码</div>
       <div class="content">
         <div>
           <el-form ref="form" :model="form" :rules="rules">
@@ -77,7 +77,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .headr{
+.headr{
     z-index: 999;
     height: 60px;
     border-bottom: 1px solid #d6dfea;
@@ -94,7 +94,7 @@ export default {
     color: white;
     text-align: -webkit-left;
 }
-.register_header{
+.findpwd_header{
     border-left: 3px solid #59AfE4;
     padding-left: 5px;
     font-size: larger;
@@ -111,32 +111,7 @@ export default {
 .content{
     margin: 5px auto;
     border-top: 1px solid #c0cdd9;
-    padding-top: 20px;
-}
-.photo{
-    border: 1px solid #fbfdff;
-    margin-left: 25px;
-    width: 200px;
-    height: 200px;
-    position: relative;
-    cursor: pointer;
-}
-.photo_button{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 30px;
-    height: 20px;
-    opacity: 0;
-    z-index: 999;
-}
-.edit{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 20px;
-    height: 20px;
-    color: #69b946;
+    padding-top: 70px;
 }
 .el-input{
     display: block !important;
@@ -149,13 +124,10 @@ export default {
     left: 78% !important;
 }
 .el-button{
-    width: 58%;
-    margin-left: 100px !important;
+    width: 60.5%;
+    margin-left: 120px !important;
     margin-top: 20px !important;
     background-color: #69b946 !important;
     height: 50px !important;
-}
-.footer{
-    margin-left: -300px;
 }
 </style>

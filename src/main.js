@@ -6,16 +6,10 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import Resource from 'vue-resource'
-import VueSocketio from 'vue-socket.io'
-import socketio from 'socket.io-client'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(Resource)
-var ipValue = require('./glbl.js')
-var ip = ipValue.socketip.value
-var ioInstance = socketio(ip)
-Vue.use(VueSocketio, ioInstance)
 
 /* eslint-disable no-new */
 new Vue({

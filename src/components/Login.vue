@@ -9,7 +9,14 @@
         <el-row class="content_wrap">
             <el-col :span="16">
                 <div>
-                    <img src="../assets/a.jpg" alt="图片" class="width_100percent">
+                    <el-carousel>
+                        <el-carousel-item v-for="item in 4" :key="item">
+                            <img v-if="item == 0" src='../assets/b.jpg' alt="图片" class="width_100percent">
+                            <img v-else-if="item == 1" src='../assets/c.jpg' alt="图片" class="width_100percent">
+                            <img v-else-if="item == 2" src='../assets/d.jpg' alt="图片" class="width_100percent">
+                            <img v-else="item == 3" src='../assets/e.jpg' alt="图片" class="width_100percent">
+                        </el-carousel-item>
+                    </el-carousel>
                 </div>
             </el-col>
             <el-col :span="8">
@@ -28,10 +35,7 @@
                                 账号或密码不对
                             </el-form-item>
                             <el-form-item class="item_bottom">
-                                <el-checkbox-group v-model="form.save">
-                                    <el-checkbox label="记住密码" class="rememberPwd"></el-checkbox>
-                                    <el-checkbox label="下次自动登录" class="right"></el-checkbox>
-                                </el-checkbox-group>
+                              <el-checkbox class="rememberPwd" v-model="form.rememberPwd">记住我</el-checkbox>
                             </el-form-item>
                             <el-form-item>
                                 <el-button @click="submitForm('form')" class="width_100percent">登录</el-button>
@@ -50,6 +54,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import VueSocketio from 'vue-socket.io'
+import socketio from 'socket.io-client'
 var ipValue = require('../glbl.js')
 var ip = ipValue.ip.value
 export default {
@@ -57,11 +64,12 @@ export default {
   data () {
     return {
       loginUrl: ip + '/user/login',
+    //   images: ['../assets/b.jpg', '../assets/a.jpg', '../assets/c.jpg', '../assets/d.jpg'],
       form: {
         user: '',
         pwd: '',
         error: false,
-        save: []
+        rememberPwd: false
       },
       rules: {
         user: [
@@ -73,6 +81,9 @@ export default {
       }
     }
   },
+  created () {
+    this.autoLogin()
+  },
   methods: {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -80,7 +91,6 @@ export default {
           this.login()
         } else {
           console.log('error submit!!')
-          sessionStorage.setItem('userId', this.form.user)
           return false
         }
       })
@@ -92,6 +102,16 @@ export default {
                 if (response.body.success) {
                   sessionStorage.setItem('userId', this.form.user)
                   window.location.href = '#/framework/proLine'
+                  // 连socket.io
+                  Vue.use(VueSocketio, socketio(ipValue.socketip.value))
+                  // 检查是否需要记住密码
+                  console.log(this.form.rememberPwd)
+                  if (this.form.rememberPwd) {
+                    this.setCookie(this.form.user, this.form.pwd)
+                  } else {
+                    // 删除cookie
+                    this.delCookie(this.form.user)
+                  }
                 } else {
                   this.$alert(response.body.msg, '登录失败', {
                     confirmButtonText: '确定'
@@ -102,6 +122,40 @@ export default {
                   confirmButtonText: '确定'
                 })
               })
+    },
+    setCookie (name, value) {
+      var expires = new Date()
+      expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000 * 7)
+      document.cookie = name + '=' + escape(value) + ';expires=' + expires.toGMTString()
+    },
+    getCookie (name) {
+      if (document.cookie.length > 0) {
+        var start = document.cookie.indexOf(name + '=')
+        if (start !== -1) {
+          start = start + name.length + 1
+          var end = document.cookie.indexOf(',', start)
+          if (end === -1) {
+            end = document.cookie.length
+          }
+          return unescape(document.cookie.substring(start, end))
+        }
+      }
+      return ''
+    },
+    // 删除cookie
+    delCookie (name) {
+      var exp = new Date()
+      exp.setTime(exp.getTime() - 1)
+      var val = this.getCookie(name)
+      if (val !== null) {
+        document.cookie = name + '=' + val + ';expires=' + exp.toGMTString()
+      }
+    },
+    autoLogin () {
+      if (document.cookie !== null) {
+        this.form.user = document.cookie.split('=')[0]
+        this.form.pwd = document.cookie.split('=')[1]
+      }
     },
     clearUserInput () {
       this.form.user = ''
@@ -175,9 +229,6 @@ export default {
   position: absolute;
   left: 0;
 }
-.right{
-    float: right;
-}
 .el-button{
     height: 42px !important;
     font-size: large !important;
@@ -185,6 +236,7 @@ export default {
     color: white !important;
 }
 .item_bottom{
+    height: 36px;
     margin-bottom: 12px !important;
 }
 .login_bottom{
