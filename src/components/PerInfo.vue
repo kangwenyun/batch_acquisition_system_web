@@ -9,7 +9,7 @@
         <el-row>
           <el-col :span="10">
             <el-upload
-              action="/v1/user/photo"
+              :action= photoUrl
               name="photo"
               :show-file-list="false"
               :multiple="false"
@@ -101,12 +101,14 @@
 <script>
 var ipValue = require('../glbl.js')
 var ip = ipValue.ip.value
+var photoip = ipValue.socketip.value
 export default {
   name: 'perInfo',
   data () {
     return {
       changePerInfoUrl: ip + '/user/changeuserinformation',
       getPerInfoUrl: ip + '/user/getuserinfo',
+      photoUrl: ip + '/user/photo',
       person: [],
       dialogFormVisible: false,
       formLabelWidth: '120px',
@@ -120,7 +122,7 @@ export default {
         job: '',
         level: '',
         joinday: '',
-        area: '',
+        area: [],
         habit: '',
         phone: '',
         weixin: '',
@@ -153,7 +155,7 @@ export default {
       vm.$http.post(this.getPerInfoUrl, {'userid': vm.form.id})
               .then((response) => {
                 if (response.body.success) {
-                  this.photo = this.ip + response.body.photo
+                  this.photo = photoip + response.body.photo
                   data = [{label: '账号：', name: response.body.userid},
                           {label: '昵称：', name: response.body.username},
                           {label: '性别：', name: response.body.sex},
@@ -189,7 +191,7 @@ export default {
       this.form.job = this.person[4].name
       this.form.level = this.person[5].name
       this.form.joinday = this.person[6].name
-      this.form.area = this.person[7].name
+      this.form.area = []
       this.form.habit = this.person[8].name
       this.form.phone = this.person[9].name
       this.form.weixin = this.person[10].name
@@ -208,7 +210,7 @@ export default {
                   var province = response.body.districts[0].districts
                   province.forEach(function (element) {
                     var pro = {
-                      value: element.adcode,
+                      value: element.name,
                       label: element.name,
                       children: []
                     }
@@ -216,7 +218,7 @@ export default {
                     var city = element.districts
                     city.forEach(function (ele) {
                       var ct = {
-                        value: ele.adcode,
+                        value: ele.name,
                         label: ele.name,
                         children: []
                       }
@@ -224,7 +226,7 @@ export default {
                       var county = ele.districts
                       county.forEach(function (e) {
                         var cty = {
-                          value: e.adcode,
+                          value: e.name,
                           label: e.name
                         }
                         this.push(cty)
@@ -260,14 +262,14 @@ export default {
                          {label: '微信号：', name: this.form.weixin},
                          {label: 'qq号：', name: this.form.qq},
                          {label: '邮箱：', name: this.form.email}]
-          this.chanchangePerInfo()
+          this.changePerInfo()
           this.dialogFormVisible = false
         }
       })
     },
     handleAvatarSuccess (res, file) {
       this.path = res.path
-      this.photo = res.path
+      this.photo = photoip + res.path
     },
     handleAvatarError (res, file) {
       this.$message.error('上传失败TT')
@@ -286,7 +288,7 @@ export default {
     },
     changePerInfo () {
       var vm = this
-      vm.$http.post(this.changePerInfoUrl, {'userid': vm.form.id, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email})
+      vm.$http.post(this.changePerInfoUrl, {'userid': vm.form.id, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email, 'photo': this.path})
               .then((response) => {
                 if (response.body.success) {
                   this.$message({

@@ -85,19 +85,41 @@
                 <el-input v-model="editForm.trayId"> </el-input>
             </el-form-item>
             <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
-                <el-input v-model="editForm.proId"> </el-input>
+                <el-input v-model="editForm.proId" disabled> </el-input>
             </el-form-item>
             <el-form-item label="批次序号" :label-width="formLabelWidth" prop = "number">
                 <el-input v-model="editForm.number"> </el-input>
             </el-form-item>
-            <el-form-item label="货物类型（长）" :label-width="formLabelWidth" prop = "type_length">
-                <el-input v-model="editForm.type_length"></el-input>
+            <el-form-item label="尺寸规格（长）" :label-width="formLabelWidth" prop = "type_length">
+                <el-select v-model="editForm.type_length" filterable placeholder="请选择尺寸规格（长）" style="width: 100%">
+                  <el-option
+                    v-for="item in types_length"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    style="width: 100%">
+                  </el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="货物类型（宽）" :label-width="formLabelWidth" prop = "type_width">
-                <el-input v-model="editForm.type_width"></el-input>
+            <el-form-item label="尺寸规格（宽）" :label-width="formLabelWidth" prop = "type_width">
+                <el-select v-model="editForm.type_width" filterable placeholder="请选择尺寸规格（宽）" style="width: 100%">
+                  <el-option
+                    v-for="item in types_width"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="货物类型（高）" :label-width="formLabelWidth" prop = "type_high">
-                <el-input v-model="editForm.type_high"></el-input>
+            <el-form-item label="尺寸规格（高）" :label-width="formLabelWidth" prop = "type_high">
+                <el-select v-model="editForm.type_high" filterable placeholder="请选择尺寸规格（高）" style="width: 100%">
+                  <el-option
+                    v-for="item in types_high"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="录入时间" :label-width="formLabelWidth">
                 <el-date-picker
@@ -130,14 +152,35 @@
             <el-form-item label="货物号" :label-width="formLabelWidth" prop = "proId">
                 <el-input v-model="plusForm.proId"> </el-input>
             </el-form-item>
-            <el-form-item label="货物类型（长）" :label-width="formLabelWidth" prop = "type_length">
-                <el-input v-model="plusForm.type_length"></el-input>
+            <el-form-item label="尺寸规格（长）" :label-width="formLabelWidth" prop = "type_length">
+                <el-select v-model="plusForm.type_length" filterable placeholder="请选择尺寸规格（长）" style="width: 100%">
+                  <el-option
+                    v-for="item in types_length"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="货物类型（宽）" :label-width="formLabelWidth" prop = "type_width">
-                <el-input v-model="plusForm.type_width"></el-input>
+            <el-form-item label="尺寸规格（宽）" :label-width="formLabelWidth" prop = "type_width">
+                <el-select v-model="plusForm.type_width" filterable placeholder="请选择尺寸规格（宽）" style="width: 100%">
+                  <el-option
+                    v-for="item in types_width"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="货物类型（高）" :label-width="formLabelWidth" prop = "type_high">
-                <el-input v-model="plusForm.type_high"></el-input>
+            <el-form-item label="尺寸规格（高）" :label-width="formLabelWidth" prop = "type_high">
+                <el-select v-model="plusForm.type_high" filterable placeholder="请选择尺寸规格（高）" style="width: 100%">
+                  <el-option
+                    v-for="item in types_high"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="录入时间" :label-width="formLabelWidth">
                 <el-date-picker
@@ -201,6 +244,13 @@ export default {
       },
       editDialogFormVisible: false,
       plusDialogFormVisible: false,
+      types_length: [{value: '1860', label: '1860'}, {value: '1680', label: '1680'}, {value: '1660', label: '1660'}, {value: '1580', label: '1580'}, {value: '1560', label: '1560'},
+              {value: '1480', label: '1480'}, {value: '1460', label: '1460'}, {value: '1380', label: '1380'}, {value: '1360', label: '1360'}, {value: '1260', label: '1260'},
+              {value: '1240', label: '1240'}, {value: '1040', label: '1040'}, {value: '974', label: '974'}, {value: '910', label: '910'}, {value: '860', label: '860'},
+              {value: '810', label: '810'}, {value: '710', label: '710'}, {value: '670', label: '670'}, {value: '580', label: '580'}, {value: '460', label: '460'},
+              {value: '360', label: '360'}],
+      types_width: [{value: '150', label: '150'}, {value: '150/300', label: '150/300'}],
+      types_high: [{value: '150', label: '150'}],
       editForm: {
         batchId: '',
         trayId: '',
@@ -233,7 +283,8 @@ export default {
           {required: true, message: '请输入货物号'}
         ],
         number: [
-          {required: true, message: '请输入批次序号'}
+          {required: true, message: '请输入批次序号'},
+          {type: 'number', message: '批次序号必须为数字值'}
         ],
         type_length: [
           {required: true, message: '请输入货物类型（长）'}
@@ -245,8 +296,7 @@ export default {
           {required: true, message: '请输入货物类型（高）'}
         ],
         flag: [
-          {required: true, message: '请输入备注值'},
-          {type: 'number', message: '备注值必须为数字值'}
+          {required: true, message: '请输入备注值'}
         ]
       }
     }
@@ -556,7 +606,7 @@ export default {
         if (valid) {
           var plusTime = new Date(this.plusForm.time)
           var vm = this
-          vm.$http.post(this.changeproductUrl, {'productid': this.plusForm.proId, 'batchid': this.plusForm.batchId, 'type_length': this.plusForm.type_length, 'type_high': this.plusForm.type_high, 'type_width': this.plusForm.type_width, 'tray': this.plusForm.trayId, 'time': this.plusForm.time, 'flag': this.plusForm.flag})
+          vm.$http.post(this.addDataUrl, {'productid': this.plusForm.proId, 'batchid': this.plusForm.batchId, 'type_length': this.plusForm.type_length, 'type_high': this.plusForm.type_high, 'type_width': this.plusForm.type_width, 'tray': this.plusForm.trayId, 'time': this.plusForm.time, 'flag': this.plusForm.flag})
                   .then((response) => {
                     if (response.body.success) {
                       var plusValue = {

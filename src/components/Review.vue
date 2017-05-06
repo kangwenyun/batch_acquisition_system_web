@@ -230,9 +230,10 @@ export default {
     notPass (index, row) {
     // var level = row.userId
       var vm = this
-      vm.$http.post(this.refusecheckUrl, {'userid': vm.id, 'changeuserid': vm.changeuserid, 'email': vm.email})
+      vm.$http.post(this.refusecheckUrl, {'userid': vm.id, 'changeuserid': row.changeuserid, 'email': row.email})
               .then((response) => {
                 if (response.body.success) {
+                  this.registerPersonList.splice(index, 1)
                   this.$message({
                     message: response.body.msg,
                     type: 'success'
