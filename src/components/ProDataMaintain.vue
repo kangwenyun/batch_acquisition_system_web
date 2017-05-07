@@ -307,6 +307,8 @@ export default {
   },
   methods: {
     load () {
+      this.proData = []
+      this.saveData = []
       var vm = this
       vm.$http.get(this.getproductlistUrl)
               .then((response) => {
@@ -505,7 +507,7 @@ export default {
           type: 'warning'
         }).then(() => {
           var vm = this
-          vm.$http.post(this.deleteDataUrl, {'productid': this.editForm.proId, 'batchid': this.editForm.batchId})
+          vm.$http.post(this.deleteDataUrl, {'productid': vm.editForm.proId, 'batchid': vm.editForm.batchId})
                   .then((response) => {
                     if (response.body.success) {
                       this.proData.splice(this.current, 1)
@@ -568,23 +570,23 @@ export default {
       this.$refs[editForm].validate((valid) => {
         if (valid) {
           var vm = this
-          vm.$http.post(this.changeproductUrl, {'productid': this.editForm.proId, 'batchid': this.editForm.batchId, 'number': this.editForm.number, 'type_length': this.editForm.type_length, 'type_high': this.editForm.type_high, 'type_width': this.editForm.type_width, 'tray': this.editForm.trayId, 'time': this.editForm.time, 'flag': this.editForm.flag})
+          vm.$http.post(this.changeproductUrl, {'productid': vm.editForm.proId, 'batchid': vm.editForm.batchId, 'number': vm.editForm.number, 'type_length': vm.editForm.type_length, 'type_high': vm.editForm.type_high, 'type_width': vm.editForm.type_width, 'tray': vm.editForm.trayId, 'time': vm.editForm.time, 'flag': vm.editForm.flag})
                   .then((response) => {
                     if (response.body.success) {
-                      var editValue = {
-                        id: this.editForm.id,
-                        batchId: this.editForm.batchId,
-                        trayId: this.editForm.trayId,
-                        proId: this.editForm.proId,
-                        number: this.editForm.number,
-                        type_length: this.editForm.type_length,
-                        type_width: this.editForm.type_width,
-                        type_high: this.editForm.type_high,
-                        time: this.editForm.time,
-                        flag: this.editForm.flag
-                      }
-                      this.proData.splice(this.current, 1, editValue)
-                      this.saveData = this.proData
+                      // var editValue = {
+                      //   batchId: vm.editForm.batchId,
+                      //   trayId: vm.editForm.trayId,
+                      //   proId: vm.editForm.proId,
+                      //   number: vm.editForm.number,
+                      //   type_length: vm.editForm.type_length,
+                      //   type_width: vm.editForm.type_width,
+                      //   type_high: vm.editForm.type_high,
+                      //   time: vm.editForm.time,
+                      //   flag: vm.editForm.flag
+                      // }
+                      // this.proData.splice(this.current, 1, editValue)
+                      // this.saveData = this.proData
+                      this.load()
                       this.editDialogFormVisible = false
                     } else {
                       this.$message({
@@ -604,25 +606,26 @@ export default {
     plusSubmitForm (plusForm) {
       this.$refs[plusForm].validate((valid) => {
         if (valid) {
-          var plusTime = new Date(this.plusForm.time)
+          // var plusTime = new Date(this.plusForm.time)
           var vm = this
           vm.$http.post(this.addDataUrl, {'productid': this.plusForm.proId, 'batchid': this.plusForm.batchId, 'type_length': this.plusForm.type_length, 'type_high': this.plusForm.type_high, 'type_width': this.plusForm.type_width, 'tray': this.plusForm.trayId, 'time': this.plusForm.time, 'flag': this.plusForm.flag})
                   .then((response) => {
                     if (response.body.success) {
-                      var plusValue = {
-                        id: this.plusForm.id,
-                        batchId: this.plusForm.batchId,
-                        trayId: this.plusForm.trayId,
-                        proId: this.plusForm.proId,
-                        number: this.plusForm.number,
-                        type_length: this.editForm.type_length,
-                        type_width: this.editForm.type_width,
-                        type_high: this.editForm.type_high,
-                        time: plusTime.getFullYear() + '-' + plusTime.getMonth() + '-' + plusTime.getDate() + ' ' + plusTime.getHours() + ':' + plusTime.getMinutes() + ':' + plusTime.getSeconds(),
-                        flag: this.plusForm.flag
-                      }
-                      this.proData.push(plusValue)
-                      this.saveData = this.proData
+                      // var plusValue = {
+                      //   id: this.plusForm.id,
+                      //   batchId: this.plusForm.batchId,
+                      //   trayId: this.plusForm.trayId,
+                      //   proId: this.plusForm.proId,
+                      //   number: this.plusForm.number,
+                      //   type_length: this.editForm.type_length,
+                      //   type_width: this.editForm.type_width,
+                      //   type_high: this.editForm.type_high,
+                      //   time: plusTime.getFullYear() + '-' + plusTime.getMonth() + '-' + plusTime.getDate() + ' ' + plusTime.getHours() + ':' + plusTime.getMinutes() + ':' + plusTime.getSeconds(),
+                      //   flag: this.plusForm.flag
+                      // }
+                      // this.proData.push(plusValue)
+                      // this.saveData = this.proData
+                      this.load()
                       this.plusDialogFormVisible = false
                     } else {
                       this.$message({

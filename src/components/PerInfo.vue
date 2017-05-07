@@ -187,7 +187,7 @@ export default {
       this.form.id = this.person[0].name
       this.form.nickname = this.person[1].name
       this.form.sex = this.person[2].name === '男' ? '1' : '2'
-      this.form.age = this.person[3].name
+      this.form.birthday = this.person[3].name
       this.form.job = this.person[4].name
       this.form.level = this.person[5].name
       this.form.joinday = this.person[6].name

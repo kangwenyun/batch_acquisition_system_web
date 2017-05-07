@@ -157,13 +157,8 @@ export default {
     },
     handleNodeClick (data, node) {
       var vm = this
-      // console.log(data) // data.id当前id
-      // console.log('-----')
-      // console.log(node)
-        //   console.log("------");
-        //   console.log(this);
-      switch (node.parent.id) {
-        case 1:
+      switch (node.parent.label) {
+        case '未接受的批次':
           this.$confirm('确定接受该批订单么?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -198,7 +193,7 @@ export default {
             })
           })
           break
-        case 2:
+        case '接受的批次':
           this.$confirm('确定提交该批订单么?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
