@@ -507,7 +507,7 @@ export default {
           type: 'warning'
         }).then(() => {
           var vm = this
-          vm.$http.post(this.deleteDataUrl, {'productid': vm.editForm.proId, 'batchid': vm.editForm.batchId})
+          vm.$http.post(this.deleteDataUrl, {'productid': this.proData[this.current].proId, 'batchid': this.proData[this.current].batchId})
                   .then((response) => {
                     if (response.body.success) {
                       this.proData.splice(this.current, 1)
