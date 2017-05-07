@@ -11,10 +11,10 @@
                 <div>
                     <el-carousel>
                         <el-carousel-item v-for="item in 4" :key="item">
-                            <img v-if="item == 0" src='../assets/b.jpg' alt="图片" class="width_100percent">
-                            <img v-else-if="item == 1" src='../assets/c.jpg' alt="图片" class="width_100percent">
-                            <img v-else-if="item == 2" src='../assets/d.jpg' alt="图片" class="width_100percent">
-                            <img v-else="item == 3" src='../assets/e.jpg' alt="图片" class="width_100percent">
+                            <img v-if="item == 1" src='../assets/b.jpg' alt="图片" class="width_100percent">
+                            <img v-else-if="item == 2" src='../assets/c.jpg' alt="图片" class="width_100percent">
+                            <img v-else-if="item == 3" src='../assets/d.jpg' alt="图片" class="width_100percent">
+                            <img v-else src='../assets/e.jpg' alt="图片" class="width_100percent">
                         </el-carousel-item>
                     </el-carousel>
                 </div>

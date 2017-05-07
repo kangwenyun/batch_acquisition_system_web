@@ -103,12 +103,8 @@
 
 
 <script>
-// import Vue from 'vue'
-// import VueSocketio from 'vue-socket.io'
-// import socketio from 'socket.io-client'
 var ipValue = require('../glbl.js')
 var ip = ipValue.ip.value
-// Vue.use(VueSocketio, socketio(ipValue.socketip.value))
 export default {
   name: 'app',
   data () {
