@@ -18,7 +18,7 @@
                       <el-input v-model="form.label"></el-input>
                   </el-form-item>
                   <el-form-item label="货物总数" :label-width="formLabelWidth" prop = "totalNum">
-                      <el-input v-model.number="form.totalNum"> </el-input>
+                      <el-input v-model="form.totalNum"> </el-input>
                   </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
@@ -73,8 +73,7 @@ export default {
           {required: true, message: '请输入批次ID'}
         ],
         totalNum: [
-          {required: true, message: '请输入货物总数'},
-          {type: 'number', message: '数量必须为数字值'}
+          {required: true, message: '请输入货物总数'}
         ]
       }
     }
@@ -257,8 +256,9 @@ export default {
     submitForm (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          var j = Number(this.batchData[0].children.length)
-          this.batchData[0].children.push({id: j, label: this.form.label})
+          // var j = Number(this.batchData[0].children.length)
+          // this.batchData[0].children.push({id: j, label: this.form.label})
+          this.addBatch()
           this.form.label = ''
           this.form.totalNum = ''
         } else {
@@ -279,6 +279,7 @@ export default {
                     message: response.body.msg,
                     type: 'success'
                   })
+                  this.load()
                 } else {
                   this.$alert(response.body.msg, '增加批次失败', {
                     confirmButtonText: '确定'
