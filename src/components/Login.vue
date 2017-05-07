@@ -7,48 +7,44 @@
             </div>
         </div>
         <el-row class="content_wrap">
-            <el-col :span="16">
-                <div>
-                    <el-carousel>
-                        <el-carousel-item v-for="item in 4" :key="item">
-                            <img v-if="item == 0" src='../assets/b.jpg' alt="图片" class="width_100percent">
-                            <img v-else-if="item == 1" src='../assets/c.jpg' alt="图片" class="width_100percent">
-                            <img v-else-if="item == 2" src='../assets/d.jpg' alt="图片" class="width_100percent">
-                            <img v-else="item == 3" src='../assets/e.jpg' alt="图片" class="width_100percent">
-                        </el-carousel-item>
-                    </el-carousel>
+            <div>
+                <el-carousel type="card" height="200px">
+                    <el-carousel-item v-for="item in 4" :key="item">
+                        <img v-if="item == 1" src='../assets/b.jpg' alt="图片" class="width_100percent">
+                        <img v-else-if="item == 2" src='../assets/c.jpg' alt="图片" class="width_100percent">
+                        <img v-else-if="item == 3" src='../assets/d.jpg' alt="图片" class="width_100percent">
+                        <img v-else src='../assets/e.jpg' alt="图片" class="width_100percent">
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
+            <div class="login">
+                <div class="login_header">账号密码登录</div>
+                <div class="login_tips"></div>
+                <div class="login_body">
+                    <el-form ref="form" :model="form" :rules="rules">
+                        <el-form-item prop="user">
+                            <el-input v-model="form.user" placeholder="请输入登录账号" icon="circle-cross" :on-icon-click="clearUserInput"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="pwd">
+                            <el-input type="password" v-model="form.pwd" placeholder="请输入登录密码" icon="circle-cross" :on-icon-click="clearPwdInput" @keyup.enter.native="submitForm('form')"></el-input>
+                        </el-form-item>
+                        <el-form-item v-if="form.error" class="error">
+                            账号或密码不对
+                        </el-form-item>
+                        <el-form-item class="item_bottom">
+                          <el-checkbox class="rememberPwd" v-model="form.rememberPwd">记住我</el-checkbox>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button @click="submitForm('form')" class="width_100percent">登录</el-button>
+                        </el-form-item>
+                    </el-form>
                 </div>
-            </el-col>
-            <el-col :span="8">
-                <div class="login">
-                    <div class="login_header">账号密码登录</div>
-                    <div class="login_tips"></div>
-                    <div class="login_body">
-                        <el-form ref="form" :model="form" :rules="rules">
-                            <el-form-item prop="user">
-                                <el-input v-model="form.user" placeholder="请输入登录账号" icon="circle-cross" :on-icon-click="clearUserInput"></el-input>
-                            </el-form-item>
-                            <el-form-item prop="pwd">
-                                <el-input type="password" v-model="form.pwd" placeholder="请输入登录密码" icon="circle-cross" :on-icon-click="clearPwdInput" @keyup.enter.native="submitForm('form')"></el-input>
-                            </el-form-item>
-                            <el-form-item v-if="form.error" class="error">
-                                账号或密码不对
-                            </el-form-item>
-                            <el-form-item class="item_bottom">
-                              <el-checkbox class="rememberPwd" v-model="form.rememberPwd">记住我</el-checkbox>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button @click="submitForm('form')" class="width_100percent">登录</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </div>
-                    <div class="login_bottom">
-                        <a href="#/forgetpasswd" class="bottom">忘记密码?</a>
-                        <span class="dividing_line"></span>
-                        <a href="#/register" class="bottom">注册新账号</a>
-                    </div>
+                <div class="login_bottom">
+                    <a href="#/forgetpasswd" class="bottom">忘记密码?</a>
+                    <span class="dividing_line"></span>
+                    <a href="#/register" class="bottom">注册新账号</a>
                 </div>
-            </el-col>
+            </div>
         </el-row>
     </div>
 </template>
@@ -64,7 +60,6 @@ export default {
   data () {
     return {
       loginUrl: ip + '/user/login',
-    //   images: ['../assets/b.jpg', '../assets/a.jpg', '../assets/c.jpg', '../assets/d.jpg'],
       form: {
         user: '',
         pwd: '',
@@ -189,7 +184,7 @@ export default {
 .content_wrap{
     max-width: 960px;
     min-width: 372px;
-    margin: 92px auto 0 auto !important;
+    margin: 72px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }
@@ -200,15 +195,16 @@ export default {
     border: 1px solid #bfcbd9;
     border-radius: 4px;
     width: 334px;
-    position: absolute;
+    margin: 0 auto;
+    position: inherit;
 }
 .login_header{
-    height: 50px;
+    height: 45px;
     font-family: "lucida Grande",Verdana,"Microsoft YaHei";
     border-bottom: 1px solid #c0cdd9;
     background-color: #f9fbfe;
     color: #333;
-    line-height: 50px;
+    line-height: 45px;
     text-align: center;
 }
 .login_tips {
@@ -219,7 +215,7 @@ export default {
 .login_body{
     width: 304px;
     margin: 0 auto;
-    height: 330px;
+    height: 280px;
 }
 .el-input__inner{
     height: 42px !important;
@@ -236,7 +232,7 @@ export default {
     color: white !important;
 }
 .item_bottom{
-    height: 36px;
+    height: 30px;
     margin-bottom: 12px !important;
 }
 .login_bottom{
@@ -263,5 +259,8 @@ a:hover{
 }
 .error{
     color: red;
+}
+.el-form-item{
+  margin-bottom: 20px;
 }
 </style>
