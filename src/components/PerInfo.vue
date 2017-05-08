@@ -113,7 +113,7 @@ export default {
       dialogFormVisible: false,
       formLabelWidth: '120px',
       path: '',
-      photo: '',
+      photo: '', // ip + path
       form: {
         id: sessionStorage.getItem('userId'),
         nickname: '',
@@ -155,6 +155,7 @@ export default {
       vm.$http.post(this.getPerInfoUrl, {'userid': vm.form.id})
               .then((response) => {
                 if (response.body.success) {
+                  this.path = response.body.photo
                   this.photo = photoip + response.body.photo
                   data = [{label: '账号：', name: response.body.userid},
                           {label: '昵称：', name: response.body.username},
@@ -252,7 +253,7 @@ export default {
           this.person = [{label: '账号：', name: this.form.id},
                          {label: '昵称：', name: this.form.nickname},
                          {label: '性别：', name: this.form.sex === '1' ? '男' : '女'},
-                         {label: '年龄：', name: this.form.age},
+                         {label: '生日：', name: this.form.birthday},
                          {label: '工作：', name: this.form.job},
                          {label: '权限：', name: this.form.level},
                          {label: '何时进入公司:', name: this.form.joinday},
@@ -288,6 +289,7 @@ export default {
     },
     changePerInfo () {
       var vm = this
+      console.log('12:' + vm.path)
       vm.$http.post(this.changePerInfoUrl, {'userid': vm.form.id, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email, 'photo': this.path})
               .then((response) => {
                 if (response.body.success) {

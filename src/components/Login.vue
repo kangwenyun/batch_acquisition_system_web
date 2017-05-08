@@ -68,7 +68,7 @@ export default {
         user: '',
         pwd: '',
         error: false,
-        rememberPwd: false
+        rememberPwd: true
       },
       rules: {
         user: [
