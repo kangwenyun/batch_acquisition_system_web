@@ -23,8 +23,9 @@
                 <el-menu-item index="prodatamaintain">货物数据维护</el-menu-item>
           </el-submenu>
           <el-submenu index="log">
-            <template slot="title">日志与权限</template>
+            <template slot="title">权限相关</template>
                 <el-menu-item index="log">日志查看</el-menu-item>
+                <el-menu-item index="account">账号管理</el-menu-item>
                 <el-menu-item index="level">权限管理</el-menu-item>
           </el-submenu>
           <el-submenu index="perinfo">
@@ -64,8 +65,9 @@
           </el-submenu>
           <el-submenu index="log">
             <template slot="title"><i class="el-icon-edit"></i>
-                <span id="log_text" :class="{show:showText,hide:hideText}">日志与权限</span></template>
+                <span id="log_text" :class="{show:showText,hide:hideText}">权限相关</span></template>
               <el-menu-item index="log">日志查看</el-menu-item>
+              <el-menu-item index="account">账号管理</el-menu-item>
               <el-menu-item index="level">权限管理</el-menu-item>
           </el-submenu>
           <el-submenu index="perinfo">

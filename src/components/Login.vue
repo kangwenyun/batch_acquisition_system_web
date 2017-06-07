@@ -219,7 +219,7 @@ export default {
 .login_body{
     width: 304px;
     margin: 0 auto;
-    height: 280px;
+    height: 360px;
 }
 .el-input__inner{
     height: 42px !important;
@@ -242,7 +242,7 @@ export default {
 .login_bottom{
     right: 15px;
     height: 16px;
-    position: absolute;
+    position: relative;
     text-align: right;
     font-size: 12px;
     bottom: 10px;
