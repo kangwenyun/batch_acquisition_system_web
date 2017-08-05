@@ -79,9 +79,9 @@ export default {
 <style scoped>
 .headr{
     z-index: 999;
-    height: 60px;
+    height: 80px;
     border-bottom: 1px solid #d6dfea;
-    background: #324157;
+    background: #20a0ff;
     line-height: 60px;
     position: fixed;
     top: 0;
@@ -104,7 +104,7 @@ export default {
     width: 800px;
     max-width: 960px;
     min-width: 372px;
-    margin: 92px auto 0 auto !important;
+    margin: 112px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }

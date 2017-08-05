@@ -23,7 +23,7 @@
         <el-table-column
             prop="id"
             label="账号"
-            width="100">
+            width="150">
         </el-table-column>
         <el-table-column
             prop="operate"
@@ -100,6 +100,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.log{
+  margin-top: 70px;
+}
 .content_wrap{
     margin: 32px auto 0 auto !important;
     padding: 0 24px;

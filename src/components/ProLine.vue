@@ -40,7 +40,7 @@ export default {
       getAllBatchUrl: ip + '/batch/getallBatch',
       addBatchUrl: ip + '/batch/addbatch',
       unaccepttoacceptBatchUrl: ip + '/batch/unaccepttoacceptBatch',
-      accepttocheckBatchUrl: ip + '/accepttocheckBatch',
+      accepttocheckBatchUrl: ip + '/batch/accepttocheckBatch',
       batchData: [{
         id: 1,
         label: '未接受的批次',
@@ -301,6 +301,7 @@ export default {
     position: relative;
     width: 500px;
     margin: 0 auto;
+    margin-top: 70px;
 }
 .addBatch{
     height: 30px !important;

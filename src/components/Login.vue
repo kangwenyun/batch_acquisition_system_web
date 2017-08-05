@@ -96,7 +96,8 @@ export default {
     },
     login () {
       var vm = this
-      vm.$http.post(this.loginUrl, {'userid': vm.form.user, 'passwd': vm.form.pwd})
+      var pas = this.compileStr(vm.form.pwd)
+      vm.$http.post(this.loginUrl, {'userid': vm.form.user, 'passwd': pas})
               .then((response) => {
                 if (response.body.success) {
                   sessionStorage.setItem('userId', this.form.user)
@@ -121,6 +122,21 @@ export default {
                   confirmButtonText: '确定'
                 })
               })
+    },
+    compileStr (code) { // 对字符串进行加密
+      var c = String.fromCharCode(code.charCodeAt(0) + code.length)
+      for (var i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) + code.charCodeAt(i - 1))
+      }
+      return escape(c)
+    },
+    uncompileStr (code) { // 字符串进行解密
+      code = unescape(code)
+      var c = String.fromCharCode(code.charCodeAt(0) - code.length)
+      for (var i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) - c.charCodeAt(i - 1))
+      }
+      return c
     },
     setCookie (name, value) {
       var expires = new Date()
@@ -170,9 +186,9 @@ export default {
 <style scoped>
 .headr{
     z-index: 999;
-    height: 60px;
+    height: 80px;
     border-bottom: 1px solid #d6dfea;
-    background: #324157;
+    background: #20a0ff;
     line-height: 60px;
     position: fixed;
     top: 0;
@@ -188,7 +204,7 @@ export default {
 .content_wrap{
     max-width: 960px;
     min-width: 372px;
-    margin: 72px auto 0 auto !important;
+    margin: 92px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }

@@ -14,7 +14,7 @@
             <el-col :span="8">
               <div class="photo">
                 <el-upload
-                  action="http://192.168.1.122:3000/v1/user/photo"
+                  action="http://172.40.135.211:3000/v1/user/photo"
                   name="photo"
                   :show-file-list="false"
                   :multiple="false"
@@ -50,6 +50,7 @@
                   v-model="form.birthday"
                   class="input_72"
                   type="date"
+                  format="yyyy-MM-dd"
                   placeholder="选择日期"
                   :picker-options="pickerOptions"
                   style="width: 100%">
@@ -62,6 +63,7 @@
                 <el-date-picker
                   v-model="form.joinday"
                   type="date"
+                  format="yyyy-MM-dd"
                   placeholder="选择日期"
                   :picker-options="pickerOptions"
                   class="input_72">
@@ -147,7 +149,8 @@ export default {
             {required: true, message: '请输入账号', trigger: 'blur'}
         ],
         pwd: [
-            {required: true, message: '请输入密码', trigger: 'blur'}
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 4, message: '长度要大于 4 个字符', trigger: 'blur'}
         ],
         pwdAgain: [
             {required: true, validator: pwdAgainVali, trigger: 'blur'}
@@ -169,7 +172,7 @@ export default {
                   var province = response.body.districts[0].districts
                   province.forEach(function (element) {
                     var pro = {
-                      value: element.adcode,
+                      value: element.name,
                       label: element.name,
                       children: []
                     }
@@ -177,7 +180,7 @@ export default {
                     var city = element.districts
                     city.forEach(function (ele) {
                       var ct = {
-                        value: ele.adcode,
+                        value: ele.name,
                         label: ele.name,
                         children: []
                       }
@@ -185,7 +188,8 @@ export default {
                       var county = ele.districts
                       county.forEach(function (e) {
                         var cty = {
-                          value: e.adcode,
+                          // value: e.adcode,
+                          value: e.name,
                           label: e.name
                         }
                         this.push(cty)
@@ -222,7 +226,7 @@ export default {
                     type: 'success'
                   })
                   // 跳转到登录界面
-                  window.location.href = '#/login'
+                  window.location.href = '#/'
                 } else {
                   this.$alert(response.body.msg, '注册失败', {
                     confirmButtonText: '确定'
@@ -236,7 +240,7 @@ export default {
     },
     handleAvatarSuccess (res, file) {
       this.form.path = res.path
-      this.form.imageUrl = 'http://192.168.1.122:3000' + res.path
+      this.form.imageUrl = 'http://172.40.135.211:3000' + res.path
     },
     handleAvatarError (res, file) {
       this.$message.error('上传失败TT')
@@ -261,9 +265,9 @@ export default {
 <style scoped>
   .headr{
     z-index: 999;
-    height: 60px;
+    height: 80px;
     border-bottom: 1px solid #d6dfea;
-    background: #324157;
+    background: #20a0ff;
     line-height: 60px;
     position: fixed;
     top: 0;
@@ -286,7 +290,7 @@ export default {
     width: 800px;
     max-width: 960px;
     min-width: 372px;
-    margin: 92px auto 0 auto !important;
+    margin: 112px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }

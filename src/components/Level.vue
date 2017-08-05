@@ -143,7 +143,7 @@ export default {
 .level{
     max-width: 960px;
     min-width: 372px;
-    margin: 32px auto 0 auto !important;
+    margin: 65px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;
 }

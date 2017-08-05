@@ -159,7 +159,7 @@ export default {
                   this.photo = photoip + response.body.photo
                   data = [{label: '账号：', name: response.body.userid},
                           {label: '昵称：', name: response.body.username},
-                          {label: '性别：', name: response.body.sex},
+                          {label: '性别：', name: response.body.sex === '1' ? '男' : '女'},
                           {label: '生日：', name: response.body.birthday},
                           {label: '工作：', name: response.body.job},
                           {label: '权限：', name: response.body.level},
@@ -316,7 +316,7 @@ export default {
 <style scoped>
 .perInfo{
   width: 600px;
-  margin: 50px auto;
+  margin: 70px auto;
 }
 .clearfix:before,
 .clearfix:after {

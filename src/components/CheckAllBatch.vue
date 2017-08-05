@@ -181,6 +181,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.checkbatch{
+  margin-top: 75px;
+}
 .content_table{
   margin-bottom: 50px;
   border-top: 1px solid #c0cdd9;

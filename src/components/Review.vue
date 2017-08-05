@@ -154,10 +154,10 @@ export default {
                       changeuserid: element.userid,
                       nickname: element.username,
                       sex: element.sex,
-                      birthday: element.birthday,
+                      birthday: element.birthday.slice(0, 10),
                       job: element.job,
                       level: element.level,
-                      joinday: element.joinday,
+                      joinday: element.joinday.slice(0, 10),
                       area: element.area,
                       habit: element.habit,
                       phone: element.phone,
@@ -284,6 +284,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.review{
+  margin-top: 70px;
+}
 .level{
     max-width: 960px;
     min-width: 372px;

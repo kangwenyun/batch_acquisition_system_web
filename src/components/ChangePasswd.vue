@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="changepasswd">
         <el-row class="content_wrap">
             <div class="change_header">密码修改</div>
             <div class="content">
@@ -8,7 +8,7 @@
                         <el-input v-model="form.user" disabled class="input_85"></el-input>
                     </el-form-item>
                     <el-form-item label="原密码  " prop="oldPwd" label-width="100px">
-                        <el-input v-model="form.oldPwd" class="input_85"></el-input>
+                        <el-input type="password" v-model="form.oldPwd" class="input_85"></el-input>
                     </el-form-item>
                     <el-form-item label="新密码" prop="newPwd" label-width="100px">
                         <el-input type="password" v-model="form.newPwd" class="input_85"></el-input>
@@ -34,7 +34,7 @@ export default {
     var pwdAgainVali = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入新密码'))
-      } else if (value !== this.form.oldPwd) {
+      } else if (value !== this.form.newPwd) {
         callback(new Error('两次新密码输入不一致!'))
       } else {
         callback()
@@ -98,10 +98,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.changepasswd{
+  margin-top: 75px;
+}
 .content_wrap{
     max-width: 800px;
     min-width: 372px;
-    width: 70%;
     margin: 32px auto 0 auto !important;
     padding: 0 24px;
     padding-bottom: 50px;

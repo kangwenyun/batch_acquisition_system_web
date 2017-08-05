@@ -27,7 +27,7 @@
             </transition>
         </div>
     </div>
-    <el-row class="content_wrap">
+    <el-row class="content">
         <router-view></router-view>
         <el-table
           :data="proData"
@@ -440,8 +440,8 @@ export default {
       this.proData.forEach(function (element) {
         var a = ' 批次号 - ' + element.batchId
         a += '; 托盘号 - ' + element.trayId + '; 货物号 - ' + element.proId
-        a += '; 批次序号 - ' + element.number + '; 货物类型 - （长）' + element.type_length
-        a += ';（宽）' + element.type_width + ';（高）' + element.type_high
+        a += '; 批次序号 - ' + element.number + '; 货物类型(长) - ' + element.type_length
+        a += ';宽 - ' + element.type_width + ';高 - ' + element.type_high
         a += '; 录入时间 - ' + element.time + '; 备注 - ' + element.flag
         this.push({value: a})
       }, data)
@@ -454,9 +454,9 @@ export default {
         trayId: value[1].split(' - ')[1],
         proId: value[2].split(' - ')[1],
         number: value[3].split(' - ')[1],
-        type_length: value[4].split(' ） ')[1],
-        type_width: value[5].split(' ） ')[1],
-        type_high: value[6].split(' ） ')[1],
+        type_length: value[4].split(' - ')[1],
+        type_width: value[5].split(' - ')[1],
+        type_high: value[6].split(' - ')[1],
         time: value[7].split(' - ')[1],
         flag: value[8].split(' - ')[1]
       }]
@@ -649,7 +649,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .maintain{
-  margin-top: 35px;
+  margin-top: 70px;
 }
 .show{
   display: inline-block;
@@ -742,7 +742,7 @@ animation: myfind-out 3s;
 .info-row:hover{
     color: black;
 }
-.content_wrap{
+.content{
     margin-top: 16px;
 }
 .el-table th{
