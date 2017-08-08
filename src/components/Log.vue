@@ -11,6 +11,13 @@
             class="log_date"
             @change="dateChange">
         </el-date-picker>
+        <el-select v-model="value" placeholder="请选择" v-show="userselect">
+          <el-option
+            v-for="item in users"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </div>
       <el-table
         :data="logData"
@@ -41,29 +48,48 @@ export default {
   name: 'log',
   data () {
     return {
+      checkpermissionUrl: ip + '/user/checkpermission',
       logUrl: ip + '/user/log',
-      date: '',
+      getuserslistUrl: ip + '/user/getuserslist',
+      id: sessionStorage.getItem('userId'),
+      date: new Date(),
       pickerOptions: {
         disabledDate (time) {
           return time.getTime() > Date.now()
         }
       },
+      userselect: false,
+      users: [],
+      value: 'All',
       logData: []
     }
   },
   created () {
-    var d = new Date()
-    var month = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1
-    var dd = d.getDate() < 10 ? '0' + d.getDate() : d.getDate()
-    var date = d.getFullYear() + '-' + month + '-' + dd
-    this.date = date
-    this.load(date)
+    this.userselectShow()
+    this.load()
+    this.getuserslist()
   },
   methods: {
-    load (date) {
-      this.logData = []
+    userselectShow () {
       var vm = this
-      vm.$http.post(this.logUrl, {'date': '-' + date})
+      vm.$http.post(this.checkpermissionUrl, {'userid': this.id})
+              .then((response) => {
+                if (response.body.success) {
+                  this.userselect = true
+                } else {
+                  this.userselect = false
+                }
+              }, (response) => {
+                this.userselect = false
+              })
+    },
+    load () {
+      var vm = this
+      var month = this.date.getMonth() + 1 < 10 ? '0' + (this.date.getMonth() + 1) : this.date.getMonth() + 1
+      var dd = this.date.getDate() < 10 ? '0' + this.date.getDate() : this.date.getDate()
+      var date = this.date.getFullYear() + '-' + month + '-' + dd
+      this.logData = []
+      vm.$http.post(this.logUrl, {'id': vm.id, 'userlist': this.value, 'date': '-' + date})
               .then((response) => {
                 if (response.body.success) {
                   var logData = response.body.log
@@ -91,9 +117,42 @@ export default {
                 })
               })
     },
+    getuserslist () {
+      this.users = [{
+        value: 'All',
+        label: 'All'
+      }]
+      var vm = this
+      vm.$http.get(this.getuserslistUrl)
+              .then((response) => {
+                if (response.body.success) {
+                  var list = response.body.userslist
+                  list.forEach(function (element) {
+                    var user = {
+                      value: element,
+                      label: element
+                    }
+                    this.users.push(user)
+                  }, this)
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'success'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
+    },
     dateChange (date) {
       this.load(date)
     }
+  },
+  watch: {
+    date: 'load',
+    value: 'load'
   }
 }
 </script>
