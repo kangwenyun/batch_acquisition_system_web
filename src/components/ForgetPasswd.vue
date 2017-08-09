@@ -15,6 +15,9 @@
                 <el-input v-model="form.user" class="input_72"></el-input>
               </el-form-item>
               <el-form-item>
+                <p class="tip">我们会在将您的密码置为初始密码之后以邮件的方式通知您</p>
+              </el-form-item>
+              <el-form-item>
                 <el-button @click="submitForm('form')" class="width_100percent">找回</el-button>
               </el-form-item>
           </el-form>
@@ -52,7 +55,8 @@ export default {
     },
     forgetpasswd () {
       var vm = this
-      vm.$http.post(this.forgetpasswdUrl, { 'userid': vm.form.user, 'passwd': vm.form.pwd, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'level': vm.form.level, 'photo': vm.form.path, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email })
+      // 'passwd': vm.form.pwd, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'level': vm.form.level, 'photo': vm.form.path, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email
+      vm.$http.post(this.forgetpasswdUrl, {'userid': vm.form.user})
               .then((response) => {
                 if (response.body.success) {
                   this.$message({
@@ -122,6 +126,10 @@ export default {
 .el-form-item__error{
     top: 25% !important;
     left: 78% !important;
+}
+.tip{
+  margin: -22px 0 0 120px;
+  color: red;
 }
 .el-button{
     width: 60.5%;
