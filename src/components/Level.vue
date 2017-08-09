@@ -20,7 +20,7 @@
         <el-table-column
             label="操作">
             <template scope="scope">
-                <el-button @click="edit(scope.$index, scope.row)" type="text" size="small">编辑</el-button>
+                <el-button :disabled="scope.row.level == 0 ? true : false" @click="edit(scope.$index, scope.row)" type="text" size="small">编辑</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -99,7 +99,7 @@ export default {
               })
     },
     edit (index, row) {
-    //   console.log(index)
+      // console.log(index)
     //   console.log('------------')
       // console.log(row)
       this.dialogFormVisible = true
