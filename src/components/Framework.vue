@@ -130,6 +130,7 @@ export default {
     },
     message: function (val) {
       this.noData = false
+      this.$emit('noData', this.noData)
       this.newDataCome += val
     }
   },

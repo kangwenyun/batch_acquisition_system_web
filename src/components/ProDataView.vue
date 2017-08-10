@@ -1,5 +1,5 @@
 <template>
-  <div class="view"> 
+  <div class="view" @noData="renew"> 
     <el-row class="content">
       <div class="find">
         <el-button @click="addAll" style="width:24%">加载全部</el-button>
@@ -81,6 +81,11 @@ export default {
     this.load()
   },
   methods: {
+    renew: function (noData) {
+      if (noData === false) {
+        location.reload()
+      }
+    },
     load () {
       var vm = this
       vm.$http.get(this.getproductlistUrl)

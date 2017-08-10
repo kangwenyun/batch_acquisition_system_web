@@ -218,7 +218,8 @@ export default {
     },
     regist () {
       var vm = this
-      vm.$http.post(this.registUrl, { 'userid': vm.form.user, 'passwd': vm.form.pwd, 'username': vm.form.nickname, 'birthday': vm.form.birthday, 'sex': vm.form.sex, 'job': vm.form.job, 'photo': vm.form.path, 'joinday': vm.form.joinday, 'area': vm.form.area, 'habit': vm.form.habit, 'phone': vm.form.phone, 'weixin': vm.form.weixin, 'qq': vm.form.qq, 'email': vm.form.email })
+      var pass = this.compileStr(this.form.pwd)
+      vm.$http.post(this.registUrl, { 'userid': this.form.user, 'passwd': pass, 'username': this.form.nickname, 'birthday': this.form.birthday, 'sex': this.form.sex, 'job': this.form.job, 'photo': this.form.path, 'joinday': this.form.joinday, 'area': this.form.area, 'habit': this.form.habit, 'phone': this.form.phone, 'weixin': this.form.weixin, 'qq': this.form.qq, 'email': this.form.email })
               .then((response) => {
                 if (response.body.success) {
                   this.$message({
@@ -237,6 +238,13 @@ export default {
                   confirmButtonText: '确定'
                 })
               })
+    },
+    compileStr (code) { // 对字符串进行加密
+      var c = String.fromCharCode(code.charCodeAt(0) + code.length)
+      for (var i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) + code.charCodeAt(i - 1))
+      }
+      return escape(c)
     },
     handleAvatarSuccess (res, file) {
       this.form.path = res.path

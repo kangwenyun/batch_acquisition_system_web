@@ -74,7 +74,9 @@ export default {
     },
     changePwd () {
       var vm = this
-      vm.$http.post(this.passwdUrl, {'userid': vm.form.user, 'oldpasswd': vm.form.oldPwd, 'newpasswd': vm.form.newPwd})
+      var oldpasswd = this.compileStr(this.form.oldPwd)
+      var newpasswd = this.compileStr(this.form.newPwd)
+      vm.$http.post(this.passwdUrl, {'userid': this.form.user, 'oldpasswd': oldpasswd, 'newpasswd': newpasswd})
               .then((response) => {
                 if (response.body.success) {
                   this.$message({
@@ -91,6 +93,13 @@ export default {
                   confirmButtonText: '确定'
                 })
               })
+    },
+    compileStr (code) { // 对字符串进行加密
+      var c = String.fromCharCode(code.charCodeAt(0) + code.length)
+      for (var i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) + code.charCodeAt(i - 1))
+      }
+      return escape(c)
     }
   }
 }

@@ -105,7 +105,7 @@ export default {
                   // 连socket.io
                   Vue.use(VueSocketio, socketio(ipValue.socketip.value))
                   // 检查是否需要记住密码
-                  console.log(this.form.rememberPwd)
+                  // console.log(this.form.rememberPwd)
                   if (this.form.rememberPwd) {
                     this.setCookie(this.form.user, this.form.pwd)
                   } else {
@@ -145,17 +145,25 @@ export default {
     },
     getCookie (name) {
       if (document.cookie.length > 0) {
-        var start = document.cookie.indexOf(name + '=')
-        if (start !== -1) {
-          start = start + name.length + 1
-          var end = document.cookie.indexOf(',', start)
-          if (end === -1) {
-            end = document.cookie.length
+        // var start = document.cookie.indexOf(name + '=')
+        // if (start !== -1) {
+        //   start = start + name.length + 1
+        //   var end = document.cookie.indexOf(',', start)
+        //   if (end === -1) {
+        //     end = document.cookie.length
+        //   }
+        //   return unescape(document.cookie.substring(start, end))
+        // }
+        var users = document.cookie.split(';')
+        var val = ' '
+        users.forEach(function (element) {
+          if (element.split('=')[0] === name) {
+            val = element.split('=')[1]
+            return val
           }
-          return unescape(document.cookie.substring(start, end))
-        }
+        }, this)
       }
-      return ''
+      return val
     },
     // 删除cookie
     delCookie (name) {
@@ -169,7 +177,8 @@ export default {
     autoLogin () {
       if (document.cookie !== null) {
         this.form.user = document.cookie.split('=')[0]
-        this.form.pwd = document.cookie.split('=')[1]
+        var val = this.getCookie(this.form.user)
+        this.form.pwd = val
       }
     },
     clearUserInput () {
