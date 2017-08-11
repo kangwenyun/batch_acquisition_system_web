@@ -72,9 +72,8 @@
         <el-table-column
             fixed="right"
             label="操作"
-            width="180px">
+            width="120px">
             <template scope="scope">
-                <el-button @click="addLevel(scope.$index, scope.row)" type="text" size="small" class="operate">添加权限</el-button>
                 <el-button @click="pass(scope.$index, scope.row)" type="text" size="small" class="operate">通过</el-button>
                 <el-button @click="notPass(scope.$index, scope.row)" type="text" size="small" class="operate">未通过</el-button>
             </template>
@@ -200,32 +199,11 @@ export default {
                 })
               })
     },
-    addLevel (index, row) {
-      // console.log(row)
-      this.addForm.changeuserid = row.changeuserid
-      this.dialogFormVisible = true
-    },
     pass (index, row) {
       // var level = row.userId
       // console.log(row)
-      var vm = this
-      vm.$http.post(this.checkusertouserUrl, {'userid': vm.id, 'changeuserid': row.changeuserid})
-              .then((response) => {
-                if (response.body.success) {
-                  this.$message({
-                    message: response.body.msg,
-                    type: 'success'
-                  })
-                } else {
-                  this.$alert(response.body.msg, '通过失败', {
-                    confirmButtonText: '确定'
-                  })
-                }
-              }, (response) => {
-                this.$alert(response.body.msg, '通过失败1', {
-                  confirmButtonText: '确定'
-                })
-              })
+      this.addForm.changeuserid = row.changeuserid
+      this.dialogFormVisible = true
     },
     notPass (index, row) {
     // var level = row.userId
@@ -254,6 +232,23 @@ export default {
         if (valid) {
           this.checkuser()
           this.dialogFormVisible = false
+          this.$http.post(this.checkusertouserUrl, {'userid': this.id, 'changeuserid': this.addForm.changeuserid})
+              .then((response) => {
+                if (response.body.success) {
+                  // this.$message({
+                  //   message: response.body.msg,
+                  //   type: 'success'
+                  // })
+                } else {
+                  this.$alert(response.body.msg, '通过失败', {
+                    confirmButtonText: '确定'
+                  })
+                }
+              }, (response) => {
+                this.$alert(response.body.msg, '通过失败1', {
+                  confirmButtonText: '确定'
+                })
+              })
         }
       })
     },
