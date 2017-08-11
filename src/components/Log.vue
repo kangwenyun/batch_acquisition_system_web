@@ -134,10 +134,6 @@ export default {
                     }
                     this.users.push(user)
                   }, this)
-                  this.$message({
-                    message: response.body.msg,
-                    type: 'success'
-                  })
                 }
               }, (response) => {
                 this.$message({

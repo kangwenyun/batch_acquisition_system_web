@@ -30,9 +30,9 @@
           <el-submenu index="log">
             <template slot="title"><i class="el-icon-edit"></i>权限相关</template>
                 <el-menu-item index="log">日志查看</el-menu-item>
-                <el-menu-item index="account">账号管理</el-menu-item>
-                <el-menu-item index="level">权限管理</el-menu-item>
-                <el-menu-item index="review" v-if="reviewPage">新注册用户审核</el-menu-item>
+                <el-menu-item index="account" v-if="permissionToShow">账号管理</el-menu-item>
+                <el-menu-item index="level" v-if="permissionToShow">权限管理</el-menu-item>
+                <el-menu-item index="review" v-if="permissionToShow">新注册用户审核</el-menu-item>
           </el-submenu>
           <el-submenu index="perinfo">
             <template slot="title"><i class="el-icon-star-on"></i>个人信息</template>
@@ -67,9 +67,9 @@
             <template slot="title"><i class="el-icon-edit"></i>
                 <span id="log_text" :class="{show:showText,hide:hideText}">权限相关</span></template>
               <el-menu-item index="log">日志查看</el-menu-item>
-              <el-menu-item index="account">账号管理</el-menu-item>
-              <el-menu-item index="level">权限管理</el-menu-item>
-              <el-menu-item index="review" v-if="reviewPage">新注册用户审核</el-menu-item>
+              <el-menu-item index="account" v-if="permissionToShow">账号管理</el-menu-item>
+              <el-menu-item index="level" v-if="permissionToShow">权限管理</el-menu-item>
+              <el-menu-item index="review" v-if="permissionToShow">新注册用户审核</el-menu-item>
           </el-submenu>
           <el-submenu index="perinfo">
             <template slot="title"><i class="el-icon-star-on"></i>
@@ -120,7 +120,7 @@ export default {
       hideText: true,
       noData: true,
       newDataCome: '',
-      reviewPage: false,
+      permissionToShow: false,
       dialogVisible: false
     }
   },
@@ -143,12 +143,12 @@ export default {
       vm.$http.post(this.checkpermissionUrl, {'userid': vm.id})
               .then((response) => {
                 if (response.body.success) {
-                  this.reviewPage = true
+                  this.permissionToShow = true
                 } else {
-                  this.reviewPage = false
+                  this.permissionToShow = false
                 }
               }, (response) => {
-                this.reviewPage = false
+                this.permissionToShow = false
               })
     },
     handleClick () {
