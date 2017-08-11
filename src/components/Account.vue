@@ -77,7 +77,7 @@
         <el-table-column
             fixed="right"
             label="操作"
-            width="180px">
+            width="150px">
             <template scope="scope">
                 <el-button @click="edit(scope.$index, scope.row)" type="text" size="small">修改</el-button>
                 <el-button @click="delet(scope.$index, scope.row)" type="text" size="small">删除</el-button>

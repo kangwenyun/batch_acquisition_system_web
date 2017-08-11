@@ -9,13 +9,13 @@
         stripe
         highlight-current-row
         @row-click = "rowClick"
+        @cell-mouse-enter = "popEnter"
         empty-text = "还没有当前阶段的批次信息哦~~~">
         <el-table-column type="expand">
           <template scope="props">
             <el-tree :data="props.row.detailData" 
                     :props="props.row.defaultProps" 
                     empty-text="还没有数据哦~~~"
-                    @node-click="handleNodeClick"
                     highlight-current
                     style="border: 0;background: transparent"></el-tree>
           </template>
@@ -23,6 +23,22 @@
         <el-table-column
             label="批次ID"
             prop="id">
+            <template scope="scope">
+              <el-popover 
+                trigger="hover" 
+                placement="right-end"
+                :title="trayMsg">
+                <el-table :data="popData" v-show="popDataToShow">
+                  <el-table-column prop="num" label="序号"></el-table-column>
+                  <el-table-column prop="type" width="150" label="类型"></el-table-column>
+                  <el-table-column prop="time" width="200" label="录入时间"></el-table-column>
+                  <el-table-column prop="flag" label="备注"></el-table-column>
+                </el-table>
+                <div slot="reference">
+                  <p>{{ scope.row.id }}</p>
+                </div>
+              </el-popover>
+            </template>
         </el-table-column>
         <el-table-column
             label="货物总数"
@@ -46,7 +62,10 @@ export default {
     return {
       getAllBatchUrl: ip + '/batch/getallBatch',
       getBatchDetialThroughBatchidUrl: ip + '/batch/getBatchDetialThroughBatchid',
-      batchData: []
+      batchData: [],
+      trayMsg: '',
+      popDataToShow: false,
+      popData: []
     }
   },
   created () {
@@ -148,7 +167,7 @@ export default {
                     var trayNum = response.body.list.length
                     response.body.list.forEach(function (element) {
                       var data = {
-                        label: element.tray + '-托盘总数：' + trayNum + '；此托盘货物总数：' + element.length,
+                        label: element[0].tray + '-托盘总数：' + trayNum + '；此托盘货物总数：' + element.length,
                         children: []
                       }
                       element.forEach(function (ele) {
@@ -171,9 +190,42 @@ export default {
                 })
               })
     },
-    handleNodeClick (data) {
-      // console.log('--------')
-      // console.log(data)
+    popEnter (row) {
+      var vm = this
+      vm.popData = []
+      vm.$http.post(this.getBatchDetialThroughBatchidUrl, {'batchid': row.id})
+              .then((response) => {
+                if (response.body.success) {
+                  var trayNum = response.body.list.length
+                  if (trayNum === 0) {
+                    this.trayMsg = '当前批次货物已有数为0'
+                    this.popDataToShow = false
+                  }
+                  response.body.list.forEach(function (element) {
+                    vm.trayMsg = element[0].tray + '-托盘总数：' + trayNum + '；此托盘货物总数：' + element.length
+                    element.forEach(function (ele) {
+                      var val = {
+                        num: ele.number,
+                        type: ele.type_length + '*' + ele.type_width + '*' + ele.type_high,
+                        time: ele.time,
+                        flag: ele.flag
+                      }
+                      vm.popData.push(val)
+                      vm.popDataToShow = true
+                    })
+                  })
+                } else {
+                  this.$message({
+                    message: response.body.msg,
+                    type: 'error'
+                  })
+                }
+              }, (response) => {
+                this.$message({
+                  message: response.body.msg,
+                  type: 'error'
+                })
+              })
     }
   }
 }
